@@ -170,7 +170,7 @@ worldwide_info %>%
 entities_info <- map_depth(pdf_files, 2, pluck, 2) %>%
   map(str_extract_all, pattern = "([:alpha:]+\\s){1,3}\\| [:digit:]+")
 
-# Chihuahua, Chiapas, Campeche y Michoacan
+## Chihuahua, Chiapas, Campeche y Michoacan ##
 ch <- entities_info %>%
   # Elegir los valores que contengan "CH"
   map_depth(2, str_subset, pattern = "[C|c][H|h]") %>%
@@ -211,10 +211,29 @@ chiapas <- ch %>%
   as.integer()
 
 # Chihuahua
-chihuahua <- ch %>%
-  map_at(3, pluck)
+#chihuahua <-
+ch %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "CHIHU", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de 4 digitos de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]{4}") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
+  map(unique) %>%
+  # Elegir manualmente ciertos numeros
+  map_at(c(21, 25), pluck, 1) %>%
+  # Completar manualmente ciertos numeros
+  map_at(1, ~ "1147") %>%
+  map_at(2, ~ "1159") %>%
+  map_at(3, ~ "1169") %>%
+  map_at(4, ~ "1177") %>%
+  map_at(5, ~ "1187") %>%
+  map_at(6, ~ "1198")
 
-# Sonora, Sinaloa y San Luis Potosi
+## Sonora, Sinaloa y San Luis Potosi ##
 sn <- entities_info %>%
   # Elegir los valores que comiencen con "S"
   map_depth(2, str_subset, pattern = "^[S|s]") %>%
@@ -224,7 +243,7 @@ sn <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
-# Ciudad de Mexico y Estado de Mexico
+## Ciudad de Mexico y Estado de Mexico ##
 mex <- entities_info %>%
   # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
   map_depth(2, agrep, pattern = "MEXICO", value = TRUE) %>%
@@ -234,7 +253,7 @@ mex <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
-# Baja California y Baja California Sur
+## Baja California y Baja California Sur ##
 bc <- entities_info %>%
   # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
   map_depth(2, agrep, pattern = "CALIFORNIA", value = TRUE) %>%
@@ -244,7 +263,7 @@ bc <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
-# Quintana Roo y Queretaro
+## Quintana Roo y Queretaro ##
 qr <- entities_info %>%
   # Elegir los valores que comiencen con "QU"
   map_depth(2, str_subset, pattern = "^[Q|q][U|u]") %>%
@@ -254,7 +273,7 @@ qr <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
-# Tabasco y Tamaulipas
+## Tabasco y Tamaulipas ##
 ta <- entities_info %>%
   # Elegir los valores que comiencen con "TA"
   map_depth(2, str_subset, pattern = "^[T|t][A|a]") %>%
@@ -264,7 +283,7 @@ ta <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
-# Guanajuato y Guerrero
+## Guanajuato y Guerrero ##
 gu <- entities_info %>%
   # Elegir los valores que comiencen con "GU"
   map_depth(2, str_subset, pattern = "^[G|g][U|u]") %>%
@@ -274,7 +293,7 @@ gu <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
-# Colima y Coahuila
+## Colima y Coahuila ##
 co <- entities_info %>%
   # Elegir los valores que comiencen con "CO"
   map_depth(2, str_subset, pattern = "^[C|c][O|o]") %>%
@@ -284,7 +303,7 @@ co <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
-# Tlaxcala y Oaxaca
+## Tlaxcala y Oaxaca ##
 xla <- entities_info %>%
   # Elegir los valores que contengan "XA o XC"
   map_depth(2, str_subset, pattern = "[X|x]([A|a]|[C|c])") %>%
