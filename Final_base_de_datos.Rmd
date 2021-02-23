@@ -7,7 +7,6 @@ output:
 
 
 ```{r setup, include=FALSE}
-pacman::p_load(fs, magrittr, purrr, tibble, dplyr, stringr, quanteda, pdftools)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -23,9 +22,12 @@ Ricardo Sinaí Vargas Kumul
 
 # Introducción
 
+# Proyecto 1
+
 ## Bibliotecas de R a usar
+
 ```{r}
-pacman::p_load(tidyverse, skimr, httr, jsonlite, lubridate, tidytext, wordcloud, RColorBrewer)
+pacman::p_load(fs, magrittr, purrr, tibble, dplyr, stringr, quanteda, pdftools)
 ```
 
 ## 1. Extraer la información que se encuentre en la primera base de datos.
