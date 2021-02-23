@@ -333,7 +333,7 @@ sonora <- sn %>%
   as.integer()
 
 # Sinaloa
-sn %>%
+sinaloa <- sn %>%
   # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
   map_depth(2, agrep, pattern = "SINA", value = TRUE) %>%
   # Poner los resultados en un solo arreglo por dia
@@ -353,9 +353,50 @@ sn %>%
   map_at(10, ~ "2949") %>%
   map_at(15, ~ "2993") %>%
   map_at(17, ~ "3004") %>%
+  map_at(25, ~ "3119") %>%
+  map_at(26, ~ "3128") %>%
+  map_at(27, ~ "3142") %>%
+  map_at(28, ~ "3150") %>%
   # Corregir manualmente ciertos numeros
-  map_at(12, ~ "2669") %>%
-  map_at(20, ~ "3052")
+  map_at(12, ~ "2969") %>%
+  map_at(20, ~ "3052") %>%
+  # Convertir la lista en un arreglo numerico
+  flatten_chr() %>%
+  str_remove_all(pattern = ",") %>%
+  as.integer()
+
+# San Luis Potosi
+san_luis_potosi <- sn %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "SANL", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de 4 digitos de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]{4}") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
+  map(unique) %>%
+  # Completar manualmente ciertos numeros
+  map_at(1, ~ "1190") %>%
+  map_at(2, ~ "1211") %>%
+  map_at(4, ~ "1243") %>%
+  map_at(6, ~ "1297") %>%
+  map_at(7, ~ "1298") %>%
+  map_at(8, ~ "1319") %>%
+  map_at(9, ~ "1355") %>%
+  map_at(12, ~ "1421") %>%
+  map_at(13, ~ "1427") %>%
+  map_at(14, ~ "1431") %>%
+  map_at(16, ~ "1457") %>%
+  map_at(17, ~ "1463") %>%
+  map_at(21, ~ "1542") %>%
+  map_at(24, ~ "1624") %>%
+  map_at(29, ~ "1681") %>%
+  ## Convertir la lista en un arreglo numerico
+  flatten_chr() %>%
+  str_remove_all(pattern = ",") %>%
+  as.integer()
 
 ## Ciudad de Mexico y Estado de Mexico ##
 mex <- entities_info %>%
@@ -544,6 +585,8 @@ positive_deaths_info <- as_tibble(
     "Chiapas" = chiapas,
     "Chihuahua" = chihuahua,
     "Michoacán" = michoacan,
+    "San Luis Potosí" = san_luis_potosi,
+    "Sinaloa" = sinaloa,
     "Sonora" = sonora
   )
 )
