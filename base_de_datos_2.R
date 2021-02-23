@@ -406,6 +406,44 @@ mex <- entities_info %>%
   transpose() %>%
   map_depth(1, flatten_chr) %>%
   # Eliminar los valores repetidos
+  map(unique) %>%
+  # Completar manualmente ciertos numeros
+  map_at(4, ~ "10780") %>%
+  map_at(6, ~ "10869") %>%
+  map_at(7, ~ "10900") %>%
+  map_at(8, ~ "10986") %>%
+  map_at(9, ~ "11043") %>%
+  map_at(10, ~ "11103") %>%
+  map_at(11, ~ "11146") %>%
+  map_at(12, ~ "11199") %>%
+  map_at(13, ~ "11224") %>%
+  map_at(15, ~ "11318") %>%
+  map_at(16, ~ "11351") %>%
+  map_at(17, ~ "11403") %>%
+  map_at(18, ~ "11491") %>%
+  map_at(19, ~ "11545") %>%
+  map_at(20, ~ "11571") %>%
+  map_at(24, ~ "11814") %>%
+  map_at(25, ~ "11894") %>%
+  map_at(26, ~ "11926") %>%
+  map_at(27, ~ "11962") %>%
+  map_at(28, ~ "119996") %>%
+  ## Convertir la lista en un arreglo numerico
+  flatten_chr() %>%
+  str_remove_all(pattern = ",") %>%
+  as.integer()
+
+# Ciudad de Mexico
+mex %>%
+  # Elegir los valores que comiencen con "C"
+  map_depth(2, str_subset, pattern = "^C") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de 4 digitos de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]{5}") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
   map(unique)
 
 ## Baja California y Baja California Sur ##
