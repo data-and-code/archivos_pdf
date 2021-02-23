@@ -68,7 +68,7 @@ body <- dashboardBody(
 
                     ),
 
-                    box(title = "tabla formateada",
+                    box(title = "Tabla de información",
 
                         # Create a new Row in the UI for selectInputs
                         fluidRow(
@@ -98,14 +98,20 @@ body <- dashboardBody(
                             ),
                         ),
                         # Create a new row for the table.
-                        DT::dataTableOutput("table_4")
+                        DT::dataTableOutput("table_4"),
+
+                        downloadButton('downloadDataCSV', 'Descargar CSV'),
+                        downloadButton('downloadDataXLS', 'Descargar XLS'),
+                        downloadButton('downloadDataDOC', 'Descargar DOC'),
+                        downloadButton('downloadDataTXT', 'Descargar TXT'),
+                        downloadButton('downloadDataHTML', 'Descargar HTML')
 
                     ),
                 )
         ),
 
         tabItem(tabName = "data_2",
-                h2("Widgets tab content")
+                h2("Base de Datos 2")
         )
     )
 )
@@ -162,6 +168,46 @@ server <- function(input, output) {
         }
         data
     }))
+
+    output$downloadDataCSV <- downloadHandler(
+        filename = function() {
+            paste("dataset-", Sys.Date(), ".csv", sep="")
+        },
+        content = function(file) {
+            write.csv(subjects_info, file)
+        })
+
+    output$downloadDataXLS <- downloadHandler(
+        filename = function() {
+            paste("dataset-", Sys.Date(), ".xls", sep="")
+        },
+        content = function(file) {
+            write.csv(subjects_info, file)
+        })
+
+    output$downloadDataDOC <- downloadHandler(
+        filename = function() {
+            paste("dataset-", Sys.Date(), ".doc", sep="")
+        },
+        content = function(file) {
+            write.csv(subjects_info, file)
+        })
+
+    output$downloadDataTXT <- downloadHandler(
+        filename = function() {
+            paste("dataset-", Sys.Date(), ".txt", sep="")
+        },
+        content = function(file) {
+            write.csv(subjects_info, file)
+        })
+
+    output$downloadDataHTML <- downloadHandler(
+        filename = function() {
+            paste("dataset-", Sys.Date(), ".html", sep="")
+        },
+        content = function(file) {
+            write.csv(subjects_info, file)
+        })
 }
 
 # Run the application
