@@ -1,0 +1,126 @@
+---
+output:
+  rmdformats::readthedown:
+    highlight: tango
+    cards: false
+---
+
+
+```{r setup, include=FALSE}
+pacman::p_load(fs, magrittr, purrr, tibble, dplyr, stringr, quanteda, pdftools)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Base de Datos 1
+
+Hecho por:
+
+Calvin Alberto López Alvarez
+
+Fernando Gomez Perera
+
+Ricardo Sinaí Vargas Kumul
+
+# Introducción
+
+## Bibliotecas de R a usar
+```{r}
+pacman::p_load(tidyverse, skimr, httr, jsonlite, lubridate, tidytext, wordcloud, RColorBrewer)
+```
+
+## 1. Extraer la información que se encuentre en la primera base de datos.
+
+```{r}
+# Leer el contenido de los archivos PDFs y almacenarlos en una sola lista
+pdf_files <- dir_ls("Temarios IDeIO finales/", recurse = TRUE, glob = "*.pdf") %>%
+  map(pdf_text) %>%
+  # Colapsar el texto de cada PDF en una sola cadena
+  map_chr(str_c, collapse = " ")
+
+# Extraer los nombres de los ciclos en orden
+cycles <- names(pdf_files) %>%
+  str_split_fixed(pattern = "/", n = 3) %>%
+  extract(,2) %>%
+  unique() %>%
+  extract(c(2:4, 1))
+
+# Obtener una lista de listas con el contenido de los PDFs agrupados por ciclos
+syllabus <- cycles %>%
+  # Separar y agrupar los PDFs por ciclos
+  map(~ keep(pdf_files, str_detect(names(pdf_files), pattern = .x))) %>%
+  # Asignar el nombre de cada ciclo
+  set_names(nm = cycles) %>%
+  # Renombrar los PDFs extrayendo solamente el nombre de la materia
+  map_depth(1, ~ set_names(.x, str_extract(names(.x), pattern = "[A-Z]{2}[0-9]{3}.*(?=.pdf)")))
+```
+
+### Visualizar el resultado 1
+```{r}
+View(syllabus)
+```
+
+## 2. Crear una tabla con el número de palabras totales por ciclo.
+
+```{r}
+# Importar al entorno los terminos de parada (stop words) en español
+stop_words_es <- stopwords(language = "es")
+
+# Composicion de funciones para obtener las palabras del texto
+get_words <- compose(
+  # Convertir el texto a minusculas
+  str_to_lower,
+  # Dividir y extraer las subcadenas de texto que correspondan a palabras
+  ~ tokens(.x, remove_punct = TRUE, remove_numbers = TRUE, remove_url = TRUE),
+  # Convertir el resultado a un vector de caracteres
+  as.character,
+  # Eliminar los terminos de parada de las palabras
+  ~ .x[!.x %in% stop_words_es],
+  # Eliminar los tokens que solo estan compuestos por un caracter
+  ~ .x[str_length(.x) > 1],
+  # Ejecutar las funciones en el orden que fueron declaradas
+  .dir = "forward"
+)
+
+# Extraer todas las palabras por temario
+words_by_syllabus <- syllabus %>%
+  map_depth(2, get_words)
+
+# Obtener el numero de palabras totales por ciclo
+num_words_by_cycle <- words_by_syllabus %>%
+  # Contar el numero de palabras de cada temario
+  map_depth(2, length) %>%
+  # Obtener el numero de palabras por ciclo
+  map_depth(1, reduce, sum) %>%
+  # Convertir la lista a una tabla
+  as_tibble()
+```
+
+### Visualizar el resultado 2
+```{r}
+View(num_words_by_cycle)
+```
+
+## 3. Crear una tabla con las 10 palabras con mayor frecuencia que coinciden por ciclo.
+
+```{r}
+most_freq_by_cycle <- words_by_syllabus %>%
+  # Eliminar un nivel para tener las palabras de todos los temarios por ciclo
+  map_depth(1, ~ reduce(.x, append)) %>%
+  # Convertir los arreglos de palabras en una matriz dispersa de termino-documento por ciclo
+  map(dfm) %>%
+  # Obtener las 10 palabras mas frecuentes por ciclo
+  map(textstat_frequency, n = 10) %>%
+  # Seleccionar ciertas columnas
+  map(as_tibble) %>%
+  map(~ select(.x, Palabras = feature, Frecuencia = docfreq)) %>%
+  # Agregar una columna con el nombre del ciclo
+  map2(cycles, ~ add_column(.x, Ciclo = .y)) %>%
+  # Convertir el resultado en una sola tabla
+  reduce(bind_rows)
+```
+
+### Visualizar el resultado 3
+```{r}
+View(most_freq_by_cycle)
+```
+
