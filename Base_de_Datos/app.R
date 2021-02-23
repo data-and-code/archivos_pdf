@@ -18,21 +18,89 @@ body <- dashboardBody(
                 fluidRow(
                     box(title = "Número de palabras totales por ciclo", status = "info", tableOutput("table_1")),
 
-                    box(title = "Las 10 palabras con mayor frecuencia", status = "info",
-                        selectInput("variable", "Ciclos:",
-                                    c("Primer Ciclo" = "Primer Ciclo",
-                                      "Segundo Ciclo" = "Segundo Ciclo",
-                                      "Tercer Ciclo" = "Tercer Ciclo",
-                                      "Cuarto Ciclo" = "Cuarto Ciclo")),
-                        tableOutput("table_2")),
+                    box(title = "10 palabras con mayor frecuencia por ciclo",
 
-                    box(title = "Palabras únicas en cada archivo", status = "info",
-                        selectInput("archivo", "Archivos:",
-                                    c("ID0101 Diseño de patrones para datos estructurados" = "ID0101 Diseño de patrones para datos estructurados",
-                                      "ID0102 Física clásica" = "ID0102 Física clásica",
-                                      "ID0103 Organización y diseño de computadoras" = "ID0103 Organización y diseño de computadoras",
-                                      "ID0160 Pensamiento crítico para ingeniería" = "ID0160 Pensamiento crítico para ingeniería")),
-                        tableOutput("table_3")),
+                        # Create a new Row in the UI for selectInputs
+                        fluidRow(
+                            column(4,
+                                   selectInput("pal",
+                                               "Palabras:",
+                                               c("todos",
+                                                 unique(as.character(most_freq_by_cycle$Palabras))))
+                            ),
+                            column(4,
+                                   selectInput("frec",
+                                               "Frecuencia:",
+                                               c("todos",
+                                                 unique(as.character(most_freq_by_cycle$Frecuencia))))
+                            ),
+                            column(4,
+                                   selectInput("cic",
+                                               "Ciclo:",
+                                               c("todos",
+                                                 unique(as.character(most_freq_by_cycle$Ciclo))))
+                            )
+                        ),
+                        # Create a new row for the table.
+                        DT::dataTableOutput("table_2")
+
+                        ),
+
+                    box(title = "Palabras únicas en cada archivo",
+
+                        # Create a new Row in the UI for selectInputs
+                        fluidRow(
+                            column(4,
+                                   selectInput("pala",
+                                               "Palabras:",
+                                               c("todos",
+                                                 unique(as.character(uniq_words_by_syllabus$Palabras))))
+                            ),
+                            column(4,
+                                   selectInput("arc",
+                                               "Archivo:",
+                                               c("todos",
+                                                 unique(as.character(uniq_words_by_syllabus$Archivo))))
+                            ),
+                        ),
+                        # Create a new row for the table.
+                        DT::dataTableOutput("table_3")
+
+                    ),
+
+                    box(title = "Número de palabras totales por ciclo",
+
+                        # Create a new Row in the UI for selectInputs
+                        fluidRow(
+                            column(4,
+                                   selectInput("asig",
+                                               "Nombre de la asignatura:",
+                                               c("todos",
+                                                 unique(as.character(subjects_info$`Nombre de la asignatura`))))
+                            ),
+                            column(4,
+                                   selectInput("cla",
+                                               "Clave:",
+                                               c("todos",
+                                                 unique(as.character(subjects_info$Clave))))
+                            ),
+                            column(4,
+                                   selectInput("cic",
+                                               "Ciclo:",
+                                               c("todos",
+                                                 unique(as.character(subjects_info$Ciclo))))
+                            ),
+                            column(4,
+                                   selectInput("cred",
+                                               "Créditos:",
+                                               c("todos",
+                                                 unique(as.character(subjects_info$Créditos))))
+                            ),
+                        ),
+                        # Create a new row for the table.
+                        DT::dataTableOutput("table_4")
+
+                    ),
                 )
         ),
 
@@ -52,8 +120,48 @@ ui <- dashboardPage(header,
 server <- function(input, output) {
 
     output$table_1 <- renderTable(num_words_by_cycle, width = "90%", striped = T, hover = T, align = 'c')
-    output$table_2 <- renderTable(filter(most_freq_by_cycle,most_freq_by_cycle$Ciclo == input$variable), width = "90%", striped = T, hover = T, align = 'c')
-    output$table_3 <- renderTable(filter(uniq_words_by_syllabus,uniq_words_by_syllabus$Archivo == input$archivo), width = "90%", striped = T, hover = T, align = 'c')
+
+    output$table_2 <- DT::renderDataTable(DT::datatable({
+        data <- most_freq_by_cycle
+        if (input$pal != "todos") {
+            data <- data[data$Palabras == input$pal,]
+        }
+        if (input$frec != "todos") {
+            data <- data[data$Frecuencia == input$frec,]
+        }
+        if (input$cic != "todos") {
+            data <- data[data$Ciclo == input$cic,]
+        }
+        data
+    }))
+
+    output$table_3 <- DT::renderDataTable(DT::datatable({
+        data <- uniq_words_by_syllabus
+        if (input$pala != "todos") {
+            data <- data[data$Palabras == input$pala,]
+        }
+        if (input$arc != "todos") {
+            data <- data[data$Archivo == input$arc,]
+        }
+        data
+    }))
+
+    output$table_4 <- DT::renderDataTable(DT::datatable({
+        data <- subjects_info
+        if (input$asig != "todos") {
+            data <- data[data$`Nombre de la asignatura` == input$asig,]
+        }
+        if (input$cla != "todos") {
+            data <- data[data$Clave == input$cla,]
+        }
+        if (input$cic != "todos") {
+            data <- data[data$Ciclo == input$cic,]
+        }
+        if (input$cred != "todos") {
+            data <- data[data$Créditos == input$cred,]
+        }
+        data
+    }))
 }
 
 # Run the application
