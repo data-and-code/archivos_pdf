@@ -21,12 +21,45 @@ america <-
   transpose() %>%
   map_depth(1, flatten_chr) %>%
   # Eliminar los numeros repetidos
-  map(unique)
+  map(unique) %>%
+  # Elegir manualmente ciertos numeros
+  map_if(~ length(.x) == 2, pluck, 1) %>%
+  # Completar manualmente los numero faltantes
+  map_at(24, ~ "15,872,421")
+
+# Europa
+europe <-
+  # Extraer el numero de acuerdo con la secuencia de valores detectada al principio y final del mes
+  map(continents_info, str_extract_all, pattern = "(?<=\\n|\\s)[4-5],([:digit:]{3},?){2}") %>%
+  # Eliminar los numeros que no corresponden a posibles resultados
+  map_depth(2, str_subset, pattern = "0{3}", negate = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los numeros repetidos
+  map(unique) %>%
+  # Elegir manualmente ciertos numeros
+  map_at(1, pluck, 1) %>%
+  map_if(~ length(.x) > 1, pluck, 2)
 
 # Asia Sudoriental
-asia <-
+southeastern_asia <-
   # Extraer el numero de acuerdo con la secuencia de valores detectada al principio y final del mes
-  map(continents_info, str_extract_all, pattern = "[4-6],([:digit:]{3},?){2}") %>%
+  map(continents_info, str_extract_all, pattern = "(?<=\\s)[4-6],([:digit:]{3},?){2}") %>%
+  # Eliminar los numeros que no corresponden a posibles resultados
+  map_depth(2, str_subset, pattern = "0{3}", negate = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los numeros repetidos
+  map(unique) %>%
+  # Elegir manualmente ciertos numeros
+  map_if(~ length(.x) > 1, pluck, 1)
+
+# Mediterráneo Oriental
+eastern_mediterranean <-
+  # Extraer el numero de acuerdo con la secuencia de valores detectada al principio y final del mes
+  map(continents_info, str_extract_all, pattern = "[4-5],([:digit:]{3},?){2}") %>%
   # Eliminar los numeros que no corresponden a posibles resultados
   map_depth(2, str_subset, pattern = "0{3}", negate = TRUE) %>%
   # Poner los resultados en un solo arreglo por dia
@@ -35,8 +68,20 @@ asia <-
   # Eliminar los numeros repetidos
   map(unique)
 
-# Europa
-europe <-
+# África
+africa <-
+  # Extraer el numero de acuerdo con la secuencia de valores detectada al principio y final del mes
+  map(continents_info, str_extract_all, pattern = "[4-5],([:digit:]{3},?){2}") %>%
+  # Eliminar los numeros que no corresponden a posibles resultados
+  map_depth(2, str_subset, pattern = "0{3}", negate = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los numeros repetidos
+  map(unique)
+
+# Pacífico Occidental
+western_pacific <-
   # Extraer el numero de acuerdo con la secuencia de valores detectada al principio y final del mes
   map(continents_info, str_extract_all, pattern = "[4-5],([:digit:]{3},?){2}") %>%
   # Eliminar los numeros que no corresponden a posibles resultados
