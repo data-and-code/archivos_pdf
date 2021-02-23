@@ -163,3 +163,209 @@ worldwide_info %>%
     geom_line() +
     scale_colour_manual(values = c("green", "red2", "purple", "blue2", "green4", "yellow3")) +
     labs(y = "Número de casos", title = "Casos acumulados de COVID-19 por SARS-CoV-2 por regiones de la OMS\n(Septiembre 2020)")
+
+# 3. Con la información de defunciones positivas, cree un tabla y muestre un gráfico que visualice la información mensual.
+
+# Extraer el texto del que se obtiene la informacion por entidad federativa
+entities_info <- map_depth(pdf_files, 2, pluck, 2) %>%
+  map(str_extract_all, pattern = "([:alpha:]+\\s){1,3}\\| [:digit:]+")
+
+# Chihuahua, Chiapas, Campeche y Michoacan
+ch <- entities_info %>%
+  # Elegir los valores que contengan "CH"
+  map_depth(2, str_subset, pattern = "[C|c][H|h]") %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Sonora, Sinaloa y San Luis Potosi
+sn <- entities_info %>%
+  # Elegir los valores que comiencen con "S"
+  map_depth(2, str_subset, pattern = "^[S|s]") %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Ciudad de Mexico y Estado de Mexico
+mex <- entities_info %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "MEXICO", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Baja California y Baja California Sur
+bc <- entities_info %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "CALIFORNIA", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Quintana Roo y Queretaro
+qr <- entities_info %>%
+  # Elegir los valores que comiencen con "QU"
+  map_depth(2, str_subset, pattern = "^[Q|q][U|u]") %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Tabasco y Tamaulipas
+ta <- entities_info %>%
+  # Elegir los valores que comiencen con "TA"
+  map_depth(2, str_subset, pattern = "^[T|t][A|a]") %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Guanajuato y Guerrero
+gu <- entities_info %>%
+  # Elegir los valores que comiencen con "GU"
+  map_depth(2, str_subset, pattern = "^[G|g][U|u]") %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Colima y Coahuila
+co <- entities_info %>%
+  # Elegir los valores que comiencen con "CO"
+  map_depth(2, str_subset, pattern = "^[C|c][O|o]") %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Tlaxcala y Oaxaca
+xla <- entities_info %>%
+  # Elegir los valores que contengan "XA o XC"
+  map_depth(2, str_subset, pattern = "[X|x]([A|a]|[C|c])") %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Veracruz
+ver <- entities_info %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "VERACRUZ", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Puebla
+pue <- entities_info %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "PUEBLA", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Jalisco
+ja <- entities_info %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "JALISCO", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Nuevo Leon
+nl <- entities_info %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "LEON", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Hidalgo
+hi <- entities_info %>%
+  # Elegir los valores que comiencen con "H"
+  map_depth(2, str_subset, pattern = "^[H|h]") %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Yucatan
+yu <- entities_info %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "YUC", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Morelos
+mo <- entities_info %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "MORELOS", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Nayarit
+na <- entities_info %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "NAYAR", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Zacatecas
+za <- entities_info %>%
+  # Elegir los valores que contengan "ZA"
+  map_depth(2, str_subset, pattern = "[Z|z][A|a]") %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Durango
+du <- entities_info %>%
+  # Elegir los valores que contengan "DU"
+  map_depth(2, str_subset, pattern = "[D|d][U|u]") %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
+
+# Aguascalientes
+ag <- entities_info %>%
+  # Elegir los valores que comiencen con "AG"
+  map_depth(2, str_subset, pattern = "^[A|a][G|g]") %>%
+  # Poner los resultados en un solo arreglo por dia
+  transpose() %>%
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los valores repetidos
+  map(unique)
