@@ -17,12 +17,15 @@ knitr::opts_chunk$set(echo = TRUE)
   + Ricardo Sinaí Vargas Kumul
   
 ***
+
 # Introducción
 En estos proyectos usaremos diferentes herramientas y metodologías como: [programación funcional](https://www.ionos.mx/digitalguide/paginas-web/desarrollo-web/programacion-funcional/), 
 [programacion paralela](https://www.teldat.com/blog/es/computacion-paralela-capacidad-procesamiento/), [web scrapping](https://aukera.es/blog/web-scraping/), [lógica difusa](https://www.sciencedirect.com/science/article/pii/S0186104217300955), [procesamiento del lenguaje natural](https://towardsdatascience.com/your-guide-to-natural-language-processing-nlp-48ea2511f6e1), [expresiones regulares](https://www.ionos.mx/digitalguide/paginas-web/creacion-de-paginas-web/regex/), y más....
 
 Todo este documento, la app y demás materiales al igual que otros proyectos se encuentran disponibles para su consulta y descarga en [Data&Code.com](https://data-and-code.github.io)
+
 ***
+
 # Proyecto 1
 
 En este primer proyecto tenemos varios objetivos a cumplir, y estos son:
@@ -121,25 +124,82 @@ datatable(num_words_by_cycle)
 
 ## 3. Crear una tabla con las 10 palabras con mayor frecuencia que coinciden por ciclo.
 
+* Eliminar un nivel para tener las palabras de todos los temarios por ciclo
+  + Convertir los arreglos de palabras en una matriz dispersa de termino-documento por ciclo
+  + Obtener las 10 palabras mas frecuentes por ciclo
+  + Seleccionar ciertas columnas
+  + Agregar una columna con el nombre del ciclo
+  + Convertir el resultado en una sola tabla
 ```{r}
 most_freq_by_cycle <- words_by_syllabus %>%
-  # Eliminar un nivel para tener las palabras de todos los temarios por ciclo
   map_depth(1, ~ reduce(.x, append)) %>%
-  # Convertir los arreglos de palabras en una matriz dispersa de termino-documento por ciclo
   map(dfm) %>%
-  # Obtener las 10 palabras mas frecuentes por ciclo
   map(textstat_frequency, n = 10) %>%
-  # Seleccionar ciertas columnas
   map(as_tibble) %>%
   map(~ select(.x, Palabras = feature, Frecuencia = docfreq)) %>%
-  # Agregar una columna con el nombre del ciclo
   map2(cycles, ~ add_column(.x, Ciclo = .y)) %>%
-  # Convertir el resultado en una sola tabla
   reduce(bind_rows)
 ```
 
-### Visualizar el resultado 3
+### Visualizamos el resultado 3
 ```{r}
 datatable(most_freq_by_cycle)
 ```
 
+## 4. Crear una tabla con las palabras que son únicas en cada archivo.
+
+* Tener las palabras por temario eliminando la agrupacion por ciclo
+* Obtener las palabras que son unicas en cada archivo
+  + Filtrar las palabras para que sean unicas
+  + Agregar una columna con el nombre del ciclo
+  + Convertir el resultado en una sola tabla
+  + Renombrar la columna con las palabras
+  
+```{r}
+
+words_by_syllabus_no_cycle <- words_by_syllabus %>%
+  flatten()
+
+uniq_words_by_syllabus <- words_by_syllabus_no_cycle %>%
+  map2(names(words_by_syllabus_no_cycle), ~ .x[!.x %in% reduce(words_by_syllabus_no_cycle[names(words_by_syllabus_no_cycle) != .y], append)]) %>%
+  map(unique) %>%
+  map(as_tibble) %>%
+  map2(names(words_by_syllabus_no_cycle), ~ add_column(.x, Archivo = .y)) %>%
+  reduce(bind_rows) %>%
+  rename(Palabras = value)
+```
+
+# Visualizamos el resultado 4
+
+```{r}
+datatable(uniq_words_by_syllabus)
+```
+
+## 5. Crear una tabla con la siguiente información: nombre de la asignatura, clave, ciclo, créditos.
+
+* Extraer la informacion con expresiones regulares
+  + Reducir las dimensiones para eliminar la agrupacion por ciclos
+  + Convertir el resultado a una tabla
+```{r}
+subjects_info <-
+  list(
+    "Nombre de la asignatura" = map_depth(syllabus, 1, ~ str_trim(str_extract(names(.x), pattern = "(?<=[A-Z]{2}[0-9]{4}).*"))),
+    "Clave" = map_depth(syllabus, 1, ~ str_extract(names(.x), pattern = "[A-Z]{2}[0-9]{4}")),
+    "Ciclo" = map_depth(syllabus, 1, ~ str_extract(.x, pattern = "(?<=Ãrea de formaciÃ³n curricular\n\\s?)[1-4]-[1-4]")),
+    "CrÃ©ditos" = map_depth(syllabus, 1, ~ str_trim(str_extract(.x, pattern = "(?<=[A-Z]{2}[0-9]{4}\\s{2,10}).*(?=\\s{2,10}(Profesional Asociado|Licenciatura (BÃ¡sica|ElecciÃ³n|Preespecialidad)))")))
+  ) %>%
+  map_depth(1, ~ reduce(.x, append)) %>%
+  as_tibble()
+```
+
+# Visualizamos el resultado 5
+
+```{r}
+datatable(subjects_info)
+```
+
+## 6. Construir una salida, donde se pueda exportar la tabla del paso 5 en formatos: .csv, .xls, .doc, .txt y html.
+
+## 7. Extra: crear un grafo ideal para que un estudiante regular termine su carrera (contar los posibles caminos). 
+
+## 8. Redactar conclusiones del trabajo realizado.
