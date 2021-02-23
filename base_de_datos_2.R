@@ -296,6 +296,42 @@ sn <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
+# Sonora
+sonora <- sn %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "SONO", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de 4 digitos de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]{4}") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
+  map(unique) %>%
+  # Elegir manualmente ciertos numeros
+  map_at(2, pluck, 1) %>%
+  map_at(7, pluck, 2) %>%
+  # Completar manualmente ciertos numeros
+  map_at(5, ~ "1277") %>%
+  map_at(9, ~ "2771") %>%
+  map_at(11, ~ "2794") %>%
+  map_at(13, ~ "2804") %>%
+  map_at(14, ~ "2806") %>%
+  map_at(17, ~ "2814") %>%
+  map_at(23, ~ "2868") %>%
+  map_at(25, ~ "2879") %>%
+  map_at(26, ~ "2883") %>%
+  map_at(27, ~ "2884") %>%
+  map_at(28, ~ "2886") %>%
+  map_at(29, ~ "2897") %>%
+  map_at(30, ~ "2899") %>%
+  # Corregir manualmente ciertos numeros
+  map_at(5, ~ "2693") %>%
+  # Convertir la lista en un arreglo numerico
+  flatten_chr() %>%
+  str_remove_all(pattern = ",") %>%
+  as.integer()
+
 ## Ciudad de Mexico y Estado de Mexico ##
 mex <- entities_info %>%
   # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
@@ -482,7 +518,8 @@ positive_deaths_info <- as_tibble(
     "Días" = seq(from = ymd('2020-09-01'), to = ymd('2020-09-30'), by = 'days'),
     "Chiapas" = chiapas,
     "Chihuahua" = chihuahua,
-    "Michoacán" = michoacan
+    "Michoacán" = michoacan,
+    "Sonora" = sonora
   )
 )
 
