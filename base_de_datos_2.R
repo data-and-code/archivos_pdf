@@ -170,6 +170,8 @@ worldwide_info %>%
 entities_info <- map_depth(pdf_files, 2, pluck, 2) %>%
   map(str_extract_all, pattern = "([:alpha:]+\\s){1,3}\\| [:digit:]+")
 
+### Estados terminados ###
+
 ## Chihuahua, Chiapas, Campeche y Michoacan ##
 ch <- entities_info %>%
   # Elegir los valores que contengan "CH"
@@ -484,6 +486,8 @@ baja_california <- bc %>%
   flatten_chr() %>%
   str_remove_all(pattern = ",") %>%
   as.integer()
+
+### Estados no terminados ###
 
 ## Quintana Roo y Queretaro ##
 qr <- entities_info %>%
