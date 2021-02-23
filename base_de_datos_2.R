@@ -649,6 +649,8 @@ ag <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
+### Presentacion de los resultados ###
+
 # Almacenar los resultados en una tabla
 positive_deaths_info <- as_tibble(
   list(
