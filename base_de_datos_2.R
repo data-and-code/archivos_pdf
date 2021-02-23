@@ -158,7 +158,7 @@ worldwide_info
 
 # Crear grafico para visualizar la información mensual
 worldwide_info %>%
-  pivot_longer(2:7, names_to = "Regiones de la OMS", values_to = "cases") %>%
+  pivot_longer(-1, names_to = "Regiones de la OMS", values_to = "cases") %>%
   ggplot(aes(x = `Días`, y = cases, color = `Regiones de la OMS`)) +
     geom_line() +
     scale_colour_manual(values = c("green", "red2", "purple", "blue2", "green4", "yellow3")) +
@@ -179,6 +179,40 @@ ch <- entities_info %>%
   map_depth(1, flatten_chr) %>%
   # Eliminar los valores repetidos
   map(unique)
+
+# Chiapas
+chiapas <- ch %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "CHIAPAS", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]+") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
+  map(unique) %>%
+  # Elegir manualmente ciertos numeros
+  map_at(3, pluck, 1) %>%
+  map_at(c(21, 23, 25), pluck, 2) %>%
+  map_at(c(22, 24), pluck, 3) %>%
+  # Completar manualmente ciertos numeros
+  map_at(1, ~ "1002") %>%
+  map_at(c(5, 8, 9, 11), ~ "1009") %>%
+  map_at(16, ~ "1016") %>%
+  map_at(26, ~ "1018") %>%
+  map_at(27, ~ "1019") %>%
+  map_at(29:30, ~ "1020") %>%
+  # Corregir manualmente ciertos numeros
+  map_at(19:20, ~ "1016") %>%
+  # Convertir la lista en un arreglo numerico
+  flatten_chr() %>%
+  str_remove_all(pattern = ",") %>%
+  as.integer()
+
+# Chihuahua
+chihuahua <- ch %>%
+  map_at(3, pluck)
 
 # Sonora, Sinaloa y San Luis Potosi
 sn <- entities_info %>%
@@ -369,3 +403,19 @@ ag <- entities_info %>%
   map_depth(1, flatten_chr) %>%
   # Eliminar los valores repetidos
   map(unique)
+
+# Almacenar los resultados en una tabla
+positive_deaths_info <- as_tibble(
+  list(
+    "Días" = seq(from = ymd('2020-09-01'), to = ymd('2020-09-30'), by = 'days'),
+    "Chiapas" = chiapas
+  )
+)
+
+# Crear grafico para visualizar la información mensual
+positive_deaths_info %>%
+  pivot_longer(-1, names_to = "Entidades federativas", values_to = "cases") %>%
+  ggplot(aes(x = `Días`, y = cases, color = `Entidades federativas`)) +
+  geom_line() +
+  labs(y = "Defunciones positivas", title = "Defunciones positivas a COVID-19 por entidad federativa\n(Septiembre 2020)")
+
