@@ -54,26 +54,32 @@ pacman::p_load(fs, magrittr, purrr, tibble, dplyr, stringr, quanteda, pdftools, 
     - Asignar el nombre de cada ciclo.
     - Renombrar los PDFs extrayendo solamente el nombre de la materia.
 ```{r}
-pdf_files <- dir_ls("Temarios IDeIO finales/", recurse = TRUE, glob = "*.pdf") %>%
+# Leer el contenido de los archivos PDFs y almacenarlos en una sola lista
+pdf_files_1 <- dir_ls("raw_data/Temarios IDeIO finales/", recurse = TRUE, glob = "*.pdf") %>%
   map(pdf_text) %>%
+  # Colapsar el texto de cada PDF en una sola cadena
   map_chr(str_c, collapse = " ")
 
-cycles <- names(pdf_files) %>%
-  str_split_fixed(pattern = "/", n = 3) %>%
-  extract(,2) %>%
+# Extraer los nombres de los ciclos en orden
+cycles <- names(pdf_files_1) %>%
+  str_split_fixed(pattern = "/", n = 4) %>%
+  extract(, 3) %>%
   unique() %>%
   extract(c(2:4, 1))
 
+# Obtener una lista de listas con el contenido de los PDFs agrupados por ciclos
 syllabus <- cycles %>%
-  map(~ keep(pdf_files, str_detect(names(pdf_files), pattern = .x))) %>%
+  # Separar y agrupar los PDFs por ciclos
+  map(~ keep(pdf_files_1, str_detect(names(pdf_files_1), pattern = .x))) %>%
+  # Asignar el nombre de cada ciclo
   set_names(nm = cycles) %>%
+  # Renombrar los PDFs extrayendo solamente el nombre de la materia
   map_depth(1, ~ set_names(.x, str_extract(names(.x), pattern = "[A-Z]{2}[0-9]{3}.*(?=.pdf)")))
-
 ```
 
 ### Visualizamos el resultado 1
 ```{r}
-str(syllabus)
+ls.str(syllabus)
 ```
 
 ## 2. Crear una tabla con el número de palabras totales por ciclo.
@@ -332,12 +338,12 @@ Con la informacion obtenida, se lleva a cabo el proceso de limpieza.
 pacman::p_load(purrr, stringr, dplyr, tidyr, ggplot2, lubridate)
 
 # Importar al entorno el texto de los PDFs diarios (obtenidos previamente mediante web scraping)
-load("base_de_datos_2.RData")
+load("app/base_de_datos_2.RData")
 
 # 2. Con la información proporcionada a nivel mundial, cree un tabla y muestre un gráfico que visualice la información mensual.
 
 # Extraer el texto del que se obtiene la informacion por regiones de la OMS
-regions_info <- map_depth(pdf_files, 2, pluck, 1)
+regions_info <- map_depth(pdf_files_2, 2, pluck, 1)
 
 # Extraer los datos de cada continente
 
@@ -508,7 +514,7 @@ Algunos estados se pudieron obtener, otros no.
 
 ```{r}
 # Extraer el texto del que se obtiene la informacion por entidad federativa
-entities_info <- map_depth(pdf_files, 2, pluck, 2) %>%
+entities_info <- map_depth(pdf_files_2, 2, pluck, 2) %>%
   map(str_extract_all, pattern = "([:alpha:]+\\s){1,3}\\| [:digit:]+")
 
 ### Estados terminados ###

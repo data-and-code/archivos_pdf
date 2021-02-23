@@ -4,22 +4,22 @@ pacman::p_load(fs, magrittr, purrr, tibble, dplyr, stringr, quanteda, pdftools)
 # 1. Extraer la información que se encuentre en la primera base de datos.
 
 # Leer el contenido de los archivos PDFs y almacenarlos en una sola lista
-pdf_files <- dir_ls("Temarios IDeIO finales/", recurse = TRUE, glob = "*.pdf") %>%
+pdf_files_1 <- dir_ls("raw_data/Temarios IDeIO finales/", recurse = TRUE, glob = "*.pdf") %>%
   map(pdf_text) %>%
   # Colapsar el texto de cada PDF en una sola cadena
   map_chr(str_c, collapse = " ")
 
 # Extraer los nombres de los ciclos en orden
-cycles <- names(pdf_files) %>%
-  str_split_fixed(pattern = "/", n = 3) %>%
-  extract(, 2) %>%
+cycles <- names(pdf_files_1) %>%
+  str_split_fixed(pattern = "/", n = 4) %>%
+  extract(, 3) %>%
   unique() %>%
   extract(c(2:4, 1))
 
 # Obtener una lista de listas con el contenido de los PDFs agrupados por ciclos
 syllabus <- cycles %>%
   # Separar y agrupar los PDFs por ciclos
-  map(~ keep(pdf_files, str_detect(names(pdf_files), pattern = .x))) %>%
+  map(~ keep(pdf_files_1, str_detect(names(pdf_files_1), pattern = .x))) %>%
   # Asignar el nombre de cada ciclo
   set_names(nm = cycles) %>%
   # Renombrar los PDFs extrayendo solamente el nombre de la materia
@@ -124,3 +124,7 @@ subjects_info <-
 
 # Visualizar el resultado 5
 View(subjects_info)
+
+# Almacenar el resultado en un archivo RData
+save(pdf_files_1, most_freq_by_cycle, num_words_by_cycle, subjects_info, syllabus, uniq_words_by_syllabus,
+     words_by_syllabus, words_by_syllabus_no_cycle, file = "app/base_de_datos_1.RData")

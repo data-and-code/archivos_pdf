@@ -7,7 +7,7 @@ load("base_de_datos_2.RData")
 # 2. Con la información proporcionada a nivel mundial, cree un tabla y muestre un gráfico que visualice la información mensual.
 
 # Extraer el texto del que se obtiene la informacion por regiones de la OMS
-regions_info <- map_depth(pdf_files, 2, pluck, 1)
+regions_info <- map_depth(pdf_files_2, 2, pluck, 1)
 
 # Extraer los datos de cada continente
 
@@ -167,7 +167,7 @@ worldwide_info %>%
 # 3. Con la información de defunciones positivas, cree un tabla y muestre un gráfico que visualice la información mensual.
 
 # Extraer el texto del que se obtiene la informacion por entidad federativa
-entities_info <- map_depth(pdf_files, 2, pluck, 2) %>%
+entities_info <- map_depth(pdf_files_2, 2, pluck, 2) %>%
   map(str_extract_all, pattern = "([:alpha:]+\\s){1,3}\\| [:digit:]+")
 
 ### Estados terminados ###

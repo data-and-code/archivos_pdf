@@ -83,7 +83,7 @@ pdf_files_500 <- pdf_urls %>%
   rev()
 
 # Almacenar los resultados en una sola lista
-pdf_files <- list(
+pdf_files_2 <- list(
   dpi_500 = pdf_files_500,
   dpi_550 = pdf_files_550,
   dpi_600 = pdf_files_600,
@@ -95,4 +95,4 @@ pdf_files <- list(
 )
 
 # Se almacena el resultado en un archivo RData para usarlo el resto del proyecto
-save(pdf_files, file = "base_de_datos_2.RData")
+save(pdf_files_2, file = "app/base_de_datos_2.RData")
