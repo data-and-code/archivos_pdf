@@ -1,4 +1,4 @@
-# BAse de datos 2
+# Base de datos 2
 pacman::p_load(purrr, stringr, dplyr, tidyr, ggplot2, lubridate)
 
 # Importar al entorno el texto de los PDFs diarios (obtenidos previamente mediante web scraping)
@@ -43,8 +43,10 @@ europe <-
   # Eliminar los numeros repetidos
   map(unique) %>%
   # Elegir manualmente ciertos numeros
-  map_at(1, pluck, 1) %>%
+  map_at(c(1, 7), pluck, 1) %>%
   map_if(~ length(.x) > 1, pluck, 2) %>%
+  # Corregir manualmente ciertos numeros
+  map_at(9, ~ "4,600,967") %>%
   # Convertir la lista en un arreglo numerico
   flatten_chr() %>%
   str_remove_all(pattern = ",") %>%
@@ -62,7 +64,11 @@ southeastern_asia <-
   # Eliminar los numeros repetidos
   map(unique) %>%
   # Elegir manualmente ciertos numeros
+  map_at(7, pluck, 2) %>%
   map_if(~ length(.x) > 1, pluck, 1) %>%
+  # Corregir manualmente ciertos numeros
+  map_at(24, ~ "6,436,394") %>%
+  map_at(28, ~ "6,810,494") %>%
   # Convertir la lista en un arreglo numerico
   flatten_chr() %>%
   str_remove_all(pattern = ",") %>%
