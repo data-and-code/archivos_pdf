@@ -329,7 +329,6 @@ save(pdf_files, file = "base_de_datos_2.RData")
 Con la informacion obtenida, se lleva a cabo el proceso de limpieza.
 
 ```{r}
-# Base de datos 2
 pacman::p_load(purrr, stringr, dplyr, tidyr, ggplot2, lubridate)
 
 # Importar al entorno el texto de los PDFs diarios (obtenidos previamente mediante web scraping)
@@ -1031,10 +1030,3 @@ positive_deaths_info %>%
 4. Redactar conclusiones del trabajop realizado
 
 Este proyecto fue por mucho más retador que el primero. En primer lugar, obtener texto de imagenes fue sumamente complejo. Además, la única forma de obtener las imágenes fue a partir de distintas muestras de distintas calidades, lo cual computacionalmente fue bastante costoso y la única forma de agilizarlo fue paralelizando el código. Esto desmuestra lo complejo que es analizar archivos tan poco estructurados como lo pueden ser los PDFs. Y bueno, al final el resultado no fue ni por poco perfecto, pues fue necesario llevar a cabo mucha limpieza para obtener los resultados.
-=======
-## 2. Con la información proporcionada a nivel mundial, cree un tabla y muestre un gráfico que visualice la información mensual.
-
-## 3. Con la información de defunciones positivas, cree un tabla y muestre un gráfico que visualice la información mensual.
-
-## 4. Redactar conclusiones del trabajo realizado.
->>>>>>> b00b116a61de12c8c7745c8101b220bb23f2c563
