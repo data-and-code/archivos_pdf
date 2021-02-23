@@ -203,3 +203,7 @@ datatable(subjects_info)
 ## 7. Extra: crear un grafo ideal para que un estudiante regular termine su carrera (contar los posibles caminos). 
 
 ## 8. Redactar conclusiones del trabajo realizado.
+
+Después de estár probando todas estas técnicas y herramientas para la extracción de datos que mencionamos en la introducción, podemos ver el potencial de poder trabajar con casi cualquier fuente de datos que tengamos **o no** disponibles, y a que hemos podido *rascar* datos de PDFs, Imagenes, demás, mientras que aprovechamos las habilidades que ya poseemos referente a visualización de datos como shiny, RMD, etc. que obtuvimos de la materia Analisís de Grandes Volumenes de Datos.
+
+Si bien aun nos queda aspectos que pulir del lado de ETL como de visualización, iremos liberando las actualizaciones conforme logremos puntos importantes.
