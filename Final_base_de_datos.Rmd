@@ -180,6 +180,7 @@ datatable(uniq_words_by_syllabus)
 * Extraer la informacion con expresiones regulares
   + Reducir las dimensiones para eliminar la agrupacion por ciclos
   + Convertir el resultado a una tabla
+  
 ```{r}
 subjects_info <-
   list(
