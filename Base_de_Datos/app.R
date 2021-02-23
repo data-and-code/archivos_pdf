@@ -68,7 +68,7 @@ body <- dashboardBody(
 
                     ),
 
-                    box(title = "Número de palabras totales por ciclo",
+                    box(title = "tabla formateada",
 
                         # Create a new Row in the UI for selectInputs
                         fluidRow(
