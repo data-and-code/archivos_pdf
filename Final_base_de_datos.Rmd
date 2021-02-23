@@ -1,105 +1,122 @@
 ---
+title: "Archivos PDF"
 output:
   rmdformats::readthedown:
     highlight: tango
     cards: false
 ---
-
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+* Hecho por:
 
-# Base de Datos 1
+  + Calvin Alberto López Alvarez
 
-Hecho por:
+  + Fernando Gomez Perera
 
-Calvin Alberto López Alvarez
-
-Fernando Gomez Perera
-
-Ricardo Sinaí Vargas Kumul
-
+  + Ricardo Sinaí Vargas Kumul
+  
+***
 # Introducción
+En estos proyectos usaremos diferentes herramientas y metodologías como: [programación funcional](https://www.ionos.mx/digitalguide/paginas-web/desarrollo-web/programacion-funcional/), 
+[programacion paralela](https://www.teldat.com/blog/es/computacion-paralela-capacidad-procesamiento/), [web scrapping](https://aukera.es/blog/web-scraping/), [lógica difusa](https://www.sciencedirect.com/science/article/pii/S0186104217300955), [procesamiento del lenguaje natural](https://towardsdatascience.com/your-guide-to-natural-language-processing-nlp-48ea2511f6e1), [expresiones regulares](https://www.ionos.mx/digitalguide/paginas-web/creacion-de-paginas-web/regex/), y más....
 
+Todo este documento, la app y demás materiales al igual que otros proyectos se encuentran disponibles para su consulta y descarga en [Data&Code.com](https://data-and-code.github.io)
+***
 # Proyecto 1
 
+En este primer proyecto tenemos varios objetivos a cumplir, y estos son:
+
+1. Extraer la información que se encuentre en la [primera base de datos](https://drive.google.com/drive/u/0/folders/1CUSIWYEE9MGIOuoFqAH3UBRIq_m-2b5D).
+2. Crear una tabla con el número de palabras totales por ciclo.
+3. Crear  una tabla con las 10 palabras con mayor frecuencia que coinciden por ciclo.
+4. Crear una tabla con las palabras que son únicas en cada archivo.
+5. Crear una tabla con la siguiente información: nombre de la asignatura, clave, ciclo, créditos.
+6. Construir una salida, donde se pueda exportar la tabla del paso 5 en formatos: .csv, .xls, .doc, .txt y html.
+7. Extra: crear un grafo ideal para que un estudiante regular termine su carrera (contar los posibles caminos). 
+8. Redactar conclusiones del trabajo realizado.
+
 ## Bibliotecas de R a usar
+[Pacman](http://https://www.rdocumentation.org/packages/pacman/versions/0.5.1) envuelve convenientemente las funciones relacionadas con la biblioteca y el paquete y las nombra de una manera intuitiva y consistente.
+
+~~Basicamente, nos permite instalar lo que nos hace falta de las librerias para su uso(incluso la propia libreria) y llamarla al mismo tiempo.~~
 
 ```{r}
-pacman::p_load(fs, magrittr, purrr, tibble, dplyr, stringr, quanteda, pdftools)
+pacman::p_load(fs, magrittr, purrr, tibble, dplyr, stringr, quanteda, pdftools, DT)
 ```
 
 ## 1. Extraer la información que se encuentre en la primera base de datos.
-
+* Aquí lo que hacemos es :
+  + Leer el contenido de los archivos PDFs y almacenarlos en una sola lista.
+  + Extraer los nombres de los ciclos en orden.
+  + Obtener una lista de listas con el contenido de los PDFs agrupados por ciclos.
+    - Separar y agrupar los PDFs por ciclos.
+    - Asignar el nombre de cada ciclo.
+    - Renombrar los PDFs extrayendo solamente el nombre de la materia.
 ```{r}
-# Leer el contenido de los archivos PDFs y almacenarlos en una sola lista
+
 pdf_files <- dir_ls("Temarios IDeIO finales/", recurse = TRUE, glob = "*.pdf") %>%
   map(pdf_text) %>%
-  # Colapsar el texto de cada PDF en una sola cadena
   map_chr(str_c, collapse = " ")
 
-# Extraer los nombres de los ciclos en orden
 cycles <- names(pdf_files) %>%
   str_split_fixed(pattern = "/", n = 3) %>%
   extract(,2) %>%
   unique() %>%
   extract(c(2:4, 1))
 
-# Obtener una lista de listas con el contenido de los PDFs agrupados por ciclos
 syllabus <- cycles %>%
-  # Separar y agrupar los PDFs por ciclos
   map(~ keep(pdf_files, str_detect(names(pdf_files), pattern = .x))) %>%
-  # Asignar el nombre de cada ciclo
   set_names(nm = cycles) %>%
-  # Renombrar los PDFs extrayendo solamente el nombre de la materia
   map_depth(1, ~ set_names(.x, str_extract(names(.x), pattern = "[A-Z]{2}[0-9]{3}.*(?=.pdf)")))
+
 ```
 
-### Visualizar el resultado 1
+### Visualizamos el resultado 1
 ```{r}
-View(syllabus)
+str(syllabus)
 ```
 
 ## 2. Crear una tabla con el número de palabras totales por ciclo.
 
+* Aquí lo que hacemos es :
+  + Importar al entorno los terminos de parada (stop words) en español
+  + Composicion de funciones para obtener las palabras del texto
+    - Convertir el texto a minusculas
+    - Dividir y extraer las subcadenas de texto que correspondan a palabras
+    - Convertir el resultado a un vector de caracteres
+    - Eliminar los terminos de parada de las palabras
+    - Eliminar los tokens que solo estan compuestos por un caracter
+    - Ejecutar las funciones en el orden que fueron declaradas
+  + Extraer todas las palabras por temario
+  + Obtener el numero de palabras totales por ciclo
+    - Contar el numero de palabras de cada temario
+    - Obtener el numero de palabras por ciclo
+    - Convertir la lista a una tabla
 ```{r}
-# Importar al entorno los terminos de parada (stop words) en español
 stop_words_es <- stopwords(language = "es")
 
-# Composicion de funciones para obtener las palabras del texto
 get_words <- compose(
-  # Convertir el texto a minusculas
   str_to_lower,
-  # Dividir y extraer las subcadenas de texto que correspondan a palabras
   ~ tokens(.x, remove_punct = TRUE, remove_numbers = TRUE, remove_url = TRUE),
-  # Convertir el resultado a un vector de caracteres
   as.character,
-  # Eliminar los terminos de parada de las palabras
   ~ .x[!.x %in% stop_words_es],
-  # Eliminar los tokens que solo estan compuestos por un caracter
   ~ .x[str_length(.x) > 1],
-  # Ejecutar las funciones en el orden que fueron declaradas
   .dir = "forward"
 )
 
-# Extraer todas las palabras por temario
 words_by_syllabus <- syllabus %>%
   map_depth(2, get_words)
 
-# Obtener el numero de palabras totales por ciclo
 num_words_by_cycle <- words_by_syllabus %>%
-  # Contar el numero de palabras de cada temario
   map_depth(2, length) %>%
-  # Obtener el numero de palabras por ciclo
   map_depth(1, reduce, sum) %>%
-  # Convertir la lista a una tabla
   as_tibble()
 ```
 
-### Visualizar el resultado 2
+### Visualizamos el resultado 2
 ```{r}
-View(num_words_by_cycle)
+datatable(num_words_by_cycle)
 ```
 
 ## 3. Crear una tabla con las 10 palabras con mayor frecuencia que coinciden por ciclo.
@@ -123,6 +140,6 @@ most_freq_by_cycle <- words_by_syllabus %>%
 
 ### Visualizar el resultado 3
 ```{r}
-View(most_freq_by_cycle)
+datatable(most_freq_by_cycle)
 ```
 
