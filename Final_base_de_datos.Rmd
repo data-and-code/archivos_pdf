@@ -219,9 +219,11 @@ En este segundo proyecto tenemos varios objetivos a cumplir, y estos son:
 
 # Extraemos los datos
 
-La extracción se ejecuta en un proceso aparte, pues un proceso bastante largo.
+Este codigo no se ejecutara debido al peso computancial alto que implica; Por otro lado, ya esta precargado los datos obtenidos por el código y será con lo que trabajaremos.
 
-```{r eval=FALSE}
+De cualquier forma, el código se mantiene a la vista para la comprensión del procedimiento.
+
+```{r eval=FALSE, include=FALSE}
 # Extraccion del texto de los PDFs
 pacman::p_load(pdftools, tesseract, rvest, purrr, furrr, stringr)
 
@@ -828,6 +830,7 @@ baja_california <- bc %>%
   as.integer()
 ```
 
+<<<<<<< HEAD
 Este código corresponde a los estados que no pudieron obtenerse.
 
 ```{r}
@@ -1028,3 +1031,10 @@ positive_deaths_info %>%
 4. Redactar conclusiones del trabajop realizado
 
 Este proyecto fue por mucho más retador que el primero. En primer lugar, obtener texto de imagenes fue sumamente complejo. Además, la única forma de obtener las imágenes fue a partir de distintas muestras de distintas calidades, lo cual computacionalmente fue bastante costoso y la única forma de agilizarlo fue paralelizando el código. Esto desmuestra lo complejo que es analizar archivos tan poco estructurados como lo pueden ser los PDFs. Y bueno, al final el resultado no fue ni por poco perfecto, pues fue necesario llevar a cabo mucha limpieza para obtener los resultados.
+=======
+## 2. Con la información proporcionada a nivel mundial, cree un tabla y muestre un gráfico que visualice la información mensual.
+
+## 3. Con la información de defunciones positivas, cree un tabla y muestre un gráfico que visualice la información mensual.
+
+## 4. Redactar conclusiones del trabajo realizado.
+>>>>>>> b00b116a61de12c8c7745c8101b220bb23f2c563
