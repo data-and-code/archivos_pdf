@@ -332,6 +332,31 @@ sonora <- sn %>%
   str_remove_all(pattern = ",") %>%
   as.integer()
 
+# Sinaloa
+sn %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "SINA", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de 4 digitos de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]{4}") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
+  map(unique) %>%
+  # Elegir manualmente ciertos numeros
+  map_at(c(3:4, 11, 13), pluck, 1) %>%
+  # Completar manualmente ciertos numeros
+  map_at(5, ~ "2868") %>%
+  map_at(7, ~ "2879") %>%
+  map_at(9, ~ "2914") %>%
+  map_at(10, ~ "2949") %>%
+  map_at(15, ~ "2993") %>%
+  map_at(17, ~ "3004") %>%
+  # Corregir manualmente ciertos numeros
+  map_at(12, ~ "2669") %>%
+  map_at(20, ~ "3052")
+
 ## Ciudad de Mexico y Estado de Mexico ##
 mex <- entities_info %>%
   # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
