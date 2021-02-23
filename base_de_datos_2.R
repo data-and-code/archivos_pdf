@@ -393,7 +393,7 @@ san_luis_potosi <- sn %>%
   map_at(21, ~ "1542") %>%
   map_at(24, ~ "1624") %>%
   map_at(29, ~ "1681") %>%
-  ## Convertir la lista en un arreglo numerico
+  # Convertir la lista en un arreglo numerico
   flatten_chr() %>%
   str_remove_all(pattern = ",") %>%
   as.integer()
@@ -406,6 +406,19 @@ mex <- entities_info %>%
   transpose() %>%
   map_depth(1, flatten_chr) %>%
   # Eliminar los valores repetidos
+  map(unique)
+
+# Ciudad de Mexico
+ciudad_de_mexico <- mex %>%
+  # Elegir los valores que comiencen con "C"
+  map_depth(2, str_subset, pattern = "^C") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de 5 digitos de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]{5}") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
   map(unique) %>%
   # Completar manualmente ciertos numeros
   map_at(4, ~ "10780") %>%
@@ -427,24 +440,11 @@ mex <- entities_info %>%
   map_at(25, ~ "11894") %>%
   map_at(26, ~ "11926") %>%
   map_at(27, ~ "11962") %>%
-  map_at(28, ~ "119996") %>%
-  ## Convertir la lista en un arreglo numerico
+  map_at(28, ~ "11996") %>%
+  # Convertir la lista en un arreglo numerico
   flatten_chr() %>%
   str_remove_all(pattern = ",") %>%
   as.integer()
-
-# Ciudad de Mexico
-mex %>%
-  # Elegir los valores que comiencen con "C"
-  map_depth(2, str_subset, pattern = "^C") %>%
-  # Poner los resultados en un solo arreglo por dia
-  map_depth(1, flatten_chr) %>%
-  # Extraer los numeros de 4 digitos de las cadenas
-  map_depth(1, str_extract_all, pattern = "[:digit:]{5}") %>%
-  # Poner los resultados en un solo arreglo por dia
-  map_depth(1, flatten_chr) %>%
-  # Eliminar los resultados repetido
-  map(unique)
 
 ## Baja California y Baja California Sur ##
 bc <- entities_info %>%
@@ -455,6 +455,35 @@ bc <- entities_info %>%
   map_depth(1, flatten_chr) %>%
   # Eliminar los valores repetidos
   map(unique)
+
+# Baja California
+baja_california <- bc %>%
+  # Elegir las
+  map_depth(2, str_subset, pattern = "[S|s][U|u][R|r]", negate = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de 4 digitos de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]{4}") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
+  map(unique) %>%
+  # Elegir manualmente ciertos numeros
+  map_at(12, pluck, 1) %>%
+  # Completar manualmente ciertos numeros
+  map_at(2, ~ "3174") %>%
+  map_at(5, ~ "3223") %>%
+  map_at(8, ~ "3249") %>%
+  map_at(17, ~ "3334") %>%
+  map_at(20, ~ "3374") %>%
+  map_at(22, ~ "3411") %>%
+  map_at(23, ~ "3434") %>%
+  map_at(24, ~ "3450") %>%
+  map_at(26, ~ "3478") %>%
+  # Convertir la lista en un arreglo numerico
+  flatten_chr() %>%
+  str_remove_all(pattern = ",") %>%
+  as.integer()
 
 ## Quintana Roo y Queretaro ##
 qr <- entities_info %>%
@@ -620,8 +649,10 @@ ag <- entities_info %>%
 positive_deaths_info <- as_tibble(
   list(
     "Días" = seq(from = ymd('2020-09-01'), to = ymd('2020-09-30'), by = 'days'),
+    "Baja California" = baja_california,
     "Chiapas" = chiapas,
     "Chihuahua" = chihuahua,
+    "Ciudad de México" = ciudad_de_mexico,
     "Michoacán" = michoacan,
     "San Luis Potosí" = san_luis_potosi,
     "Sinaloa" = sinaloa,
