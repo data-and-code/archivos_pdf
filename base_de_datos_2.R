@@ -158,7 +158,7 @@ worldwide_info
 
 # Crear grafico para visualizar la información mensual
 worldwide_info %>%
-  pivot_longer(2:7, names_to = "Regiones de la OMS", values_to = "cases") %>%
+  pivot_longer(-1, names_to = "Regiones de la OMS", values_to = "cases") %>%
   ggplot(aes(x = `Días`, y = cases, color = `Regiones de la OMS`)) +
     geom_line() +
     scale_colour_manual(values = c("green", "red2", "purple", "blue2", "green4", "yellow3")) +
@@ -170,7 +170,9 @@ worldwide_info %>%
 entities_info <- map_depth(pdf_files, 2, pluck, 2) %>%
   map(str_extract_all, pattern = "([:alpha:]+\\s){1,3}\\| [:digit:]+")
 
-# Chihuahua, Chiapas, Campeche y Michoacan
+### Estados terminados ###
+
+## Chihuahua, Chiapas, Campeche y Michoacan ##
 ch <- entities_info %>%
   # Elegir los valores que contengan "CH"
   map_depth(2, str_subset, pattern = "[C|c][H|h]") %>%
@@ -180,7 +182,113 @@ ch <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
-# Sonora, Sinaloa y San Luis Potosi
+# Chihuahua
+chihuahua <- ch %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "CHIHU", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de 4 digitos de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]{4}") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
+  map(unique) %>%
+  # Elegir manualmente ciertos numeros
+  map_at(c(21, 25), pluck, 1) %>%
+  # Completar manualmente ciertos numeros
+  map_at(1, ~ "1147") %>%
+  map_at(2, ~ "1159") %>%
+  map_at(3, ~ "1169") %>%
+  map_at(4, ~ "1177") %>%
+  map_at(5, ~ "1187") %>%
+  map_at(6, ~ "1198") %>%
+  map_at(8, ~ "1211") %>%
+  map_at(11, ~ "1233") %>%
+  map_at(13, ~ "1240") %>%
+  map_at(14, ~ "1241") %>%
+  map_at(17, ~ "1258") %>%
+  map_at(22, ~ "1291") %>%
+  map_at(29, ~ "1371") %>%
+  map_at(30, ~ "1382") %>%
+  # Corregir manualmente ciertos numeros
+  map_at(24, ~ "1318") %>%
+  map_at(25, ~ "1336") %>%
+  # Convertir la lista en un arreglo numerico
+  flatten_chr() %>%
+  str_remove_all(pattern = ",") %>%
+  as.integer()
+
+# Chiapas
+chiapas <- ch %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "CHIAPAS", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]+") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
+  map(unique) %>%
+  # Elegir manualmente ciertos numeros
+  map_at(3, pluck, 1) %>%
+  map_at(c(21, 23, 25), pluck, 2) %>%
+  map_at(c(22, 24), pluck, 3) %>%
+  # Completar manualmente ciertos numeros
+  map_at(1, ~ "1002") %>%
+  map_at(c(5, 8, 9, 11), ~ "1009") %>%
+  map_at(16, ~ "1016") %>%
+  map_at(26, ~ "1018") %>%
+  map_at(27, ~ "1019") %>%
+  map_at(29:30, ~ "1020") %>%
+  # Corregir manualmente ciertos numeros
+  map_at(19:20, ~ "1016") %>%
+  # Convertir la lista en un arreglo numerico
+  flatten_chr() %>%
+  str_remove_all(pattern = ",") %>%
+  as.integer()
+
+# Michoacan
+michoacan <- ch %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "MICH", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de 4 digitos de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]{4}") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
+  map(unique) %>%
+  # Elegir manualmente ciertos numeros
+  map_at(24:25, pluck, 1) %>%
+  # Completar manualmente ciertos numeros
+  map_at(1, ~ "1187") %>%
+  map_at(2, ~ "1227") %>%
+  map_at(4, ~ "1259") %>%
+  map_at(5, ~ "1277") %>%
+  map_at(6, ~ "1281") %>%
+  map_at(7, ~ "1288") %>%
+  map_at(8, ~ "1303") %>%
+  map_at(9, ~ "1328") %>%
+  map_at(12, ~ "1380") %>%
+  map_at(14, ~ "1399") %>%
+  map_at(17, ~ "1452") %>%
+  map_at(18, ~ "1468") %>%
+  map_at(19, ~ "1480") %>%
+  map_at(21, ~ "1489") %>%
+  map_at(22, ~ "1517") %>%
+  map_at(27, ~ "1588") %>%
+  # Corregir manualmente ciertos numeros
+  map_at(10, ~ "1345") %>%
+  map_at(16, ~ "1441") %>%
+  # Convertir la lista en un arreglo numerico
+  flatten_chr() %>%
+  str_remove_all(pattern = ",") %>%
+  as.integer()
+
+## Sonora, Sinaloa y San Luis Potosi ##
 sn <- entities_info %>%
   # Elegir los valores que comiencen con "S"
   map_depth(2, str_subset, pattern = "^[S|s]") %>%
@@ -190,7 +298,109 @@ sn <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
-# Ciudad de Mexico y Estado de Mexico
+# Sonora
+sonora <- sn %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "SONO", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de 4 digitos de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]{4}") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
+  map(unique) %>%
+  # Elegir manualmente ciertos numeros
+  map_at(2, pluck, 1) %>%
+  map_at(7, pluck, 2) %>%
+  # Completar manualmente ciertos numeros
+  map_at(5, ~ "1277") %>%
+  map_at(9, ~ "2771") %>%
+  map_at(11, ~ "2794") %>%
+  map_at(13, ~ "2804") %>%
+  map_at(14, ~ "2806") %>%
+  map_at(17, ~ "2814") %>%
+  map_at(23, ~ "2868") %>%
+  map_at(25, ~ "2879") %>%
+  map_at(26, ~ "2883") %>%
+  map_at(27, ~ "2884") %>%
+  map_at(28, ~ "2886") %>%
+  map_at(29, ~ "2897") %>%
+  map_at(30, ~ "2899") %>%
+  # Corregir manualmente ciertos numeros
+  map_at(5, ~ "2693") %>%
+  # Convertir la lista en un arreglo numerico
+  flatten_chr() %>%
+  str_remove_all(pattern = ",") %>%
+  as.integer()
+
+# Sinaloa
+sinaloa <- sn %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "SINA", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de 4 digitos de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]{4}") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
+  map(unique) %>%
+  # Elegir manualmente ciertos numeros
+  map_at(c(3:4, 11, 13), pluck, 1) %>%
+  # Completar manualmente ciertos numeros
+  map_at(5, ~ "2868") %>%
+  map_at(7, ~ "2879") %>%
+  map_at(9, ~ "2914") %>%
+  map_at(10, ~ "2949") %>%
+  map_at(15, ~ "2993") %>%
+  map_at(17, ~ "3004") %>%
+  map_at(25, ~ "3119") %>%
+  map_at(26, ~ "3128") %>%
+  map_at(27, ~ "3142") %>%
+  map_at(28, ~ "3150") %>%
+  # Corregir manualmente ciertos numeros
+  map_at(12, ~ "2969") %>%
+  map_at(20, ~ "3052") %>%
+  # Convertir la lista en un arreglo numerico
+  flatten_chr() %>%
+  str_remove_all(pattern = ",") %>%
+  as.integer()
+
+# San Luis Potosi
+san_luis_potosi <- sn %>%
+  # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
+  map_depth(2, agrep, pattern = "SANL", value = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de 4 digitos de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]{4}") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
+  map(unique) %>%
+  # Completar manualmente ciertos numeros
+  map_at(1, ~ "1190") %>%
+  map_at(2, ~ "1211") %>%
+  map_at(4, ~ "1243") %>%
+  map_at(6, ~ "1297") %>%
+  map_at(7, ~ "1298") %>%
+  map_at(8, ~ "1319") %>%
+  map_at(9, ~ "1355") %>%
+  map_at(12, ~ "1421") %>%
+  map_at(13, ~ "1427") %>%
+  map_at(14, ~ "1431") %>%
+  map_at(16, ~ "1457") %>%
+  map_at(17, ~ "1463") %>%
+  map_at(21, ~ "1542") %>%
+  map_at(24, ~ "1624") %>%
+  map_at(29, ~ "1681") %>%
+  # Convertir la lista en un arreglo numerico
+  flatten_chr() %>%
+  str_remove_all(pattern = ",") %>%
+  as.integer()
+
+## Ciudad de Mexico y Estado de Mexico ##
 mex <- entities_info %>%
   # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
   map_depth(2, agrep, pattern = "MEXICO", value = TRUE) %>%
@@ -200,7 +410,45 @@ mex <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
-# Baja California y Baja California Sur
+# Ciudad de Mexico
+ciudad_de_mexico <- mex %>%
+  # Elegir los valores que comiencen con "C"
+  map_depth(2, str_subset, pattern = "^C") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de 5 digitos de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]{5}") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
+  map(unique) %>%
+  # Completar manualmente ciertos numeros
+  map_at(4, ~ "10780") %>%
+  map_at(6, ~ "10869") %>%
+  map_at(7, ~ "10900") %>%
+  map_at(8, ~ "10986") %>%
+  map_at(9, ~ "11043") %>%
+  map_at(10, ~ "11103") %>%
+  map_at(11, ~ "11146") %>%
+  map_at(12, ~ "11199") %>%
+  map_at(13, ~ "11224") %>%
+  map_at(15, ~ "11318") %>%
+  map_at(16, ~ "11351") %>%
+  map_at(17, ~ "11403") %>%
+  map_at(18, ~ "11491") %>%
+  map_at(19, ~ "11545") %>%
+  map_at(20, ~ "11571") %>%
+  map_at(24, ~ "11814") %>%
+  map_at(25, ~ "11894") %>%
+  map_at(26, ~ "11926") %>%
+  map_at(27, ~ "11962") %>%
+  map_at(28, ~ "11996") %>%
+  # Convertir la lista en un arreglo numerico
+  flatten_chr() %>%
+  str_remove_all(pattern = ",") %>%
+  as.integer()
+
+## Baja California y Baja California Sur ##
 bc <- entities_info %>%
   # Aproximar la busqueda de texto usando logica difusa (Usando la distancia de edicion de Levenshtein)
   map_depth(2, agrep, pattern = "CALIFORNIA", value = TRUE) %>%
@@ -210,7 +458,38 @@ bc <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
-# Quintana Roo y Queretaro
+# Baja California
+baja_california <- bc %>%
+  # Elegir las
+  map_depth(2, str_subset, pattern = "[S|s][U|u][R|r]", negate = TRUE) %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Extraer los numeros de 4 digitos de las cadenas
+  map_depth(1, str_extract_all, pattern = "[:digit:]{4}") %>%
+  # Poner los resultados en un solo arreglo por dia
+  map_depth(1, flatten_chr) %>%
+  # Eliminar los resultados repetido
+  map(unique) %>%
+  # Elegir manualmente ciertos numeros
+  map_at(12, pluck, 1) %>%
+  # Completar manualmente ciertos numeros
+  map_at(2, ~ "3174") %>%
+  map_at(5, ~ "3223") %>%
+  map_at(8, ~ "3249") %>%
+  map_at(17, ~ "3334") %>%
+  map_at(20, ~ "3374") %>%
+  map_at(22, ~ "3411") %>%
+  map_at(23, ~ "3434") %>%
+  map_at(24, ~ "3450") %>%
+  map_at(26, ~ "3478") %>%
+  # Convertir la lista en un arreglo numerico
+  flatten_chr() %>%
+  str_remove_all(pattern = ",") %>%
+  as.integer()
+
+### Estados no terminados ###
+
+## Quintana Roo y Queretaro ##
 qr <- entities_info %>%
   # Elegir los valores que comiencen con "QU"
   map_depth(2, str_subset, pattern = "^[Q|q][U|u]") %>%
@@ -220,7 +499,7 @@ qr <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
-# Tabasco y Tamaulipas
+## Tabasco y Tamaulipas ##
 ta <- entities_info %>%
   # Elegir los valores que comiencen con "TA"
   map_depth(2, str_subset, pattern = "^[T|t][A|a]") %>%
@@ -230,7 +509,7 @@ ta <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
-# Guanajuato y Guerrero
+## Guanajuato y Guerrero ##
 gu <- entities_info %>%
   # Elegir los valores que comiencen con "GU"
   map_depth(2, str_subset, pattern = "^[G|g][U|u]") %>%
@@ -240,7 +519,7 @@ gu <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
-# Colima y Coahuila
+## Colima y Coahuila ##
 co <- entities_info %>%
   # Elegir los valores que comiencen con "CO"
   map_depth(2, str_subset, pattern = "^[C|c][O|o]") %>%
@@ -250,7 +529,7 @@ co <- entities_info %>%
   # Eliminar los valores repetidos
   map(unique)
 
-# Tlaxcala y Oaxaca
+## Tlaxcala y Oaxaca ##
 xla <- entities_info %>%
   # Elegir los valores que contengan "XA o XC"
   map_depth(2, str_subset, pattern = "[X|x]([A|a]|[C|c])") %>%
@@ -369,3 +648,28 @@ ag <- entities_info %>%
   map_depth(1, flatten_chr) %>%
   # Eliminar los valores repetidos
   map(unique)
+
+### Presentacion de los resultados ###
+
+# Almacenar los resultados en una tabla
+positive_deaths_info <- as_tibble(
+  list(
+    "Días" = seq(from = ymd('2020-09-01'), to = ymd('2020-09-30'), by = 'days'),
+    "Baja California" = baja_california,
+    "Chiapas" = chiapas,
+    "Chihuahua" = chihuahua,
+    "Ciudad de México" = ciudad_de_mexico,
+    "Michoacán" = michoacan,
+    "San Luis Potosí" = san_luis_potosi,
+    "Sinaloa" = sinaloa,
+    "Sonora" = sonora
+  )
+)
+
+# Crear grafico para visualizar la información mensual
+positive_deaths_info %>%
+  pivot_longer(-1, names_to = "Entidades federativas", values_to = "cases") %>%
+  ggplot(aes(x = `Días`, y = cases, color = `Entidades federativas`)) +
+  geom_line() +
+  labs(y = "Defunciones positivas", title = "Defunciones positivas a COVID-19 por entidad federativa\n(Septiembre 2020)")
+
