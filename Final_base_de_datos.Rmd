@@ -222,6 +222,10 @@ En este segundo proyecto tenemos varios objetivos a cumplir, y estos son:
 
 #Extraemos los datos
 
+Este codigo no se ejecutara debido al peso computancial alto que implica; Por otro lado, ya esta precargado los datos obtenidos por el código y será con lo que trabajaremos.
+
+De cualquier forma, el código se mantiene a la vista para la comprensión del procedimiento.
+
 ```{r eval=FALSE, include=FALSE}
 # Extraccion del texto de los PDFs
 pacman::p_load(pdftools, tesseract, rvest, purrr, furrr, stringr)
@@ -324,3 +328,8 @@ save(pdf_files, file = "base_de_datos_2.RData")
 
 ```
 
+## 2. Con la información proporcionada a nivel mundial, cree un tabla y muestre un gráfico que visualice la información mensual.
+
+## 3. Con la información de defunciones positivas, cree un tabla y muestre un gráfico que visualice la información mensual.
+
+## 4. Redactar conclusiones del trabajo realizado.
