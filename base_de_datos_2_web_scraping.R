@@ -4,7 +4,7 @@ pacman::p_load(pdftools, tesseract, rvest, purrr, furrr, stringr)
 # Definir el numero de workers que permitiran ejecutar funciones de purrr de forma paralela
 plan(multisession, workers = 4)
 
-# Obtener las direcciones de los PDFs del mes (Septiembre)
+# Obtener las direcciones de los PDFs diarios del mes (Septiembre)
 pdf_urls <- read_html("https://www.gob.mx/salud/documentos/coronavirus-covid-19-comunicados-tecnicos-diarios-septiembre-2020") %>%
   # Obtener los nodos HTML que corresponden a la etiqueta "a"
   html_nodes(css = "a") %>%
