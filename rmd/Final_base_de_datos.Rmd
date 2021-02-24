@@ -11,14 +11,6 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-* Hecho por:
-
-  + Calvin Alberto López Alvarez
-
-  + Fernando Gomez Perera
-
-  + Ricardo Sinaí Vargas Kumul
-  
 ***
 # Introducción
 En estos proyectos usaremos diferentes herramientas y metodologías como: [programación funcional](https://www.ionos.mx/digitalguide/paginas-web/desarrollo-web/programacion-funcional/), 
