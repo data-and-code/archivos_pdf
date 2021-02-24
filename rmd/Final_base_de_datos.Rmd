@@ -76,7 +76,7 @@ syllabus <- cycles %>%
   map_depth(1, ~ set_names(.x, str_extract(names(.x), pattern = "[A-Z]{2}[0-9]{3}.*(?=.pdf)")))
 ```
 
-### Visualizamos el resultado 1
+## Visualizamos el resultado 1
 ```{r}
 ls.str(syllabus)
 ```
@@ -123,7 +123,7 @@ colnames(num_words_by_cycle)<-c("ciclo","conteo")
 num_words_by_cycle["ciclo"] <- c("Primero","Segundo","Tercero","Cuarto")
 ```
 
-### Visualizamos el resultado 2
+## Visualizamos el resultado 2
 ```{r}
 c <- ggplot(data=num_words_by_cycle) + geom_bar(mapping = aes(x=ciclo, y=conteo, fill=ciclo), stat='identity')
 fig <- ggplotly(c)
@@ -143,7 +143,7 @@ most_freq_by_cycle <- words_by_syllabus %>%
   reduce(bind_rows)
 ```
 
-### Visualizar el resultado 3
+## Visualizar el resultado 3
 ```{r}
 d <- ggplot(data=most_freq_by_cycle) + geom_bar(mapping = aes(x=Frecuencia, y=Palabras, fill=Ciclo), stat='identity')
 fig_2 <- ggplotly(d)
@@ -173,7 +173,7 @@ uniq_words_by_syllabus <- words_by_syllabus_no_cycle %>%
   rename(Palabras = value)
 ```
 
-### Visualizamos el resultado 4
+## Visualizamos el resultado 4
 
 ```{r}
 datatable(uniq_words_by_syllabus, filter = 'top')
@@ -197,7 +197,7 @@ subjects_info <-
   as_tibble()
 ```
 
-### Visualizamos el resultado 5
+## Visualizamos el resultado 5
 
 ```{r}
 datatable(subjects_info, filter = 'top')
@@ -340,7 +340,7 @@ pdf_files <- list(
 save(pdf_files, file = "app/base_de_datos_2.RData")
 ```
 
-2. Con la información proporcionada a nivel mundial, cree un tabla y muestre un gráfico que visualice la información mensual.
+## 2. Con la información proporcionada a nivel mundial, cree un tabla y muestre un gráfico que visualice la información mensual.
 
 Con la informacion obtenida, se lleva a cabo el proceso de limpieza.
 
@@ -503,20 +503,21 @@ worldwide_info <- as_tibble(
 datatable(worldwide_info)
 ```
 
-La gráfica correspondiente es la siguiente:
+## La gráfica correspondiente es la siguiente:
 
 ```{r}
 # Crear grafico para visualizar la información mensual
 worldwide_info %>%
   pivot_longer(-1, names_to = "Regiones de la OMS", values_to = "cases") %>%
-  ggplot(aes(x = `Días`, y = cases, color = `Regiones de la OMS`)) +
+  ggplot(aes(x = `Días`, y = cases, color = `Regiones de la OMS`)) %>%  +
     geom_line() +
     scale_colour_manual(values = c("green", "red2", "purple", "blue2", "green4", "yellow3")) +
     labs(y = "Número de casos", title = "Casos acumulados de COVID-19 por SARS-CoV-2 por regiones de la OMS\n(Septiembre 2020)")
+  ggplotly()
 ```
 
 
-3. Con la información de defunciones positivas, cree un tabla y muestre un gráfico que visualice la información mensual.
+## 3. Con la información de defunciones positivas, cree un tabla y muestre un gráfico que visualice la información mensual.
 
 La extracción de la información de los estados se lleva a cabo en las siguientes líneas de código.
 
@@ -527,7 +528,7 @@ Algunos estados se pudieron obtener, otros no.
 entities_info <- map_depth(pdf_files_2, 2, pluck, 2) %>%
   map(str_extract_all, pattern = "([:alpha:]+\\s){1,3}\\| [:digit:]+")
 
-### Estados terminados ###
+## Estados terminados ##
 
 ## Chihuahua, Chiapas, Campeche y Michoacan ##
 ch <- entities_info %>%
@@ -849,7 +850,7 @@ baja_california <- bc %>%
 Este código corresponde a los estados que no pudieron obtenerse.
 
 ```{r}
-### Estados no terminados ###
+## Estados no terminados ##
 
 ## Quintana Roo y Queretaro ##
 qr <- entities_info %>%
@@ -1012,7 +1013,7 @@ ag <- entities_info %>%
   map(unique)
 ```
 
-Finalmente, los resultados se visualizan en las siguientes líneas:
+## Finalmente, los resultados se visualizan en las siguientes líneas:
 
 ```{r}
 # Almacenar los resultados en una tabla
@@ -1033,16 +1034,17 @@ positive_deaths_info <- as_tibble(
 datatable(positive_deaths_info)
 ```
 
+## Crear grafico para visualizar la información mensual
 
 ```{r}
-# Crear grafico para visualizar la información mensual
 positive_deaths_info %>%
   pivot_longer(-1, names_to = "Entidades federativas", values_to = "cases") %>%
-  ggplot(aes(x = `Días`, y = cases, color = `Entidades federativas`)) +
+  ggplot(aes(x = `Días`, y = cases, color = `Entidades federativas`)) %>% +
   geom_line() +
   labs(y = "Defunciones positivas", title = "Defunciones positivas a COVID-19 por entidad federativa\n(Septiembre 2020)")
+  ggplotly()
 ```
 
-4. Redactar conclusiones del trabajop realizado
+## 4. Redactar conclusiones del trabajop realizado
 
 Este proyecto fue por mucho más retador que el primero. En primer lugar, obtener texto de imagenes fue sumamente complejo. Además, la única forma de obtener las imágenes fue a partir de distintas muestras de distintas calidades, lo cual computacionalmente fue bastante costoso y la única forma de agilizarlo fue paralelizando el código. Esto desmuestra lo complejo que es analizar archivos tan poco estructurados como lo pueden ser los PDFs. Y bueno, al final el resultado no fue ni por poco perfecto, pues fue necesario llevar a cabo mucha limpieza para obtener los resultados.
