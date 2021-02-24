@@ -1,6 +1,6 @@
 
 pacman::p_load(shiny,shinydashboard,fs, magrittr, purrr, tibble, dplyr, stringr, quanteda, pdftools)
-load("base_de_datos_1.RData")
+load("base_de_datos_1.RData", "base_de_datos_2.RData")
 
 header <- dashboardHeader(title = "Archivos en PDF")
 

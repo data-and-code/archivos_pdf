@@ -55,13 +55,14 @@ pacman::p_load(fs, magrittr, purrr, tibble, dplyr, stringr, quanteda, pdftools, 
     - Renombrar los PDFs extrayendo solamente el nombre de la materia.
 ```{r}
 # Leer el contenido de los archivos PDFs y almacenarlos en una sola lista
-pdf_files_1 <- dir_ls("raw_data/Temarios IDeIO finales/", recurse = TRUE, glob = "*.pdf") %>%
+pdf_files_1 <- dir_ls("../extdata/Temarios IDeIO finales/", recurse = TRUE, glob = "*.pdf") %>%
   map(pdf_text) %>%
   # Colapsar el texto de cada PDF en una sola cadena
   map_chr(str_c, collapse = " ")
 
 # Extraer los nombres de los ciclos en orden
 cycles <- names(pdf_files_1) %>%
+  str_remove("^../") %>%
   str_split_fixed(pattern = "/", n = 4) %>%
   extract(, 3) %>%
   unique() %>%
@@ -158,7 +159,6 @@ datatable(most_freq_by_cycle)
   + Renombrar la columna con las palabras
   
 ```{r}
-
 words_by_syllabus_no_cycle <- words_by_syllabus %>%
   flatten()
 
@@ -327,7 +327,7 @@ pdf_files <- list(
 )
 
 # Se almacena el resultado en un archivo RData para usarlo el resto del proyecto
-save(pdf_files, file = "base_de_datos_2.RData")
+save(pdf_files, file = "app/base_de_datos_2.RData")
 ```
 
 2. Con la información proporcionada a nivel mundial, cree un tabla y muestre un gráfico que visualice la información mensual.
@@ -338,7 +338,7 @@ Con la informacion obtenida, se lleva a cabo el proceso de limpieza.
 pacman::p_load(purrr, stringr, dplyr, tidyr, ggplot2, lubridate)
 
 # Importar al entorno el texto de los PDFs diarios (obtenidos previamente mediante web scraping)
-load("app/base_de_datos_2.RData")
+load("../app/base_de_datos_2.RData")
 
 # 2. Con la información proporcionada a nivel mundial, cree un tabla y muestre un gráfico que visualice la información mensual.
 
