@@ -2,7 +2,7 @@
 pacman::p_load(purrr, stringr, dplyr, tidyr, ggplot2, lubridate)
 
 # Importar al entorno el texto de los PDFs diarios (obtenidos previamente mediante web scraping)
-load("base_de_datos_2.RData")
+load("extdata/base_de_datos_2_raw.RData")
 
 # 2. Con la información proporcionada a nivel mundial, cree un tabla y muestre un gráfico que visualice la información mensual.
 
@@ -672,4 +672,7 @@ positive_deaths_info %>%
   ggplot(aes(x = `Días`, y = cases, color = `Entidades federativas`)) +
   geom_line() +
   labs(y = "Defunciones positivas", title = "Defunciones positivas a COVID-19 por entidad federativa\n(Septiembre 2020)")
+
+# Almacenar los resultados en un archivo RData
+save(worldwide_info, positive_deaths_info, file = "app/base_de_datos_2.RData")
 

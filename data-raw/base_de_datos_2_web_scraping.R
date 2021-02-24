@@ -1,5 +1,5 @@
 # Extraccion del texto de los PDFs
-pacman::p_load(pdftools, tesseract, rvest, purrr, furrr, stringr)
+pacman::p_load(fs, pdftools, tesseract, rvest, purrr, furrr, stringr)
 
 # Definir el numero de workers que permitiran ejecutar funciones de purrr de forma paralela
 plan(multisession, workers = 4)
@@ -95,4 +95,4 @@ pdf_files_2 <- list(
 )
 
 # Se almacena el resultado en un archivo RData para usarlo el resto del proyecto
-save(pdf_files_2, file = "app/base_de_datos_2.RData")
+save(pdf_files_2, file = "extdata/base_de_datos_2_raw.RData")
