@@ -327,7 +327,7 @@ pdf_files_2 <- list(
 )
 
 # Se almacena el resultado en un archivo RData para usarlo el resto del proyecto
-save(pdf_files_2, file = "extdata/base_de_datos_2_raw.RData")
+save(pdf_files_2, file = "../extdata/base_de_datos_2_raw.RData")
 ```
 
 2. Con la información proporcionada a nivel mundial, cree un tabla y muestre un gráfico que visualice la información mensual.
@@ -338,7 +338,7 @@ Con la informacion obtenida, se lleva a cabo el proceso de limpieza.
 pacman::p_load(purrr, stringr, dplyr, tidyr, ggplot2, lubridate)
 
 # Importar al entorno el texto de los PDFs diarios (obtenidos previamente mediante web scraping)
-load("../app/base_de_datos_2.RData")
+load("../extdata/base_de_datos_2_raw.RData")
 
 # 2. Con la información proporcionada a nivel mundial, cree un tabla y muestre un gráfico que visualice la información mensual.
 
