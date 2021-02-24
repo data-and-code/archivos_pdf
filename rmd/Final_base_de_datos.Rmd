@@ -24,7 +24,7 @@ En estos proyectos usaremos diferentes herramientas y metodologías como: [progr
 ![RE](../img/RE.png)
 Todo este documento, la app y demás materiales al igual que otros proyectos se encuentran disponibles para su consulta y descarga en [Data&Code.com](https://data-and-code.github.io)
 
-![DC](../img/D_C.png)
+![](../img/D_C.png)
 
 ***
 
