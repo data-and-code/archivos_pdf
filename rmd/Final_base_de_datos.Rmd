@@ -4,6 +4,9 @@ output:
   rmdformats::readthedown:
     highlight: tango
     cards: false
+    includes:
+      in_header: header.html
+      after_body: footer.html
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -21,7 +24,15 @@ knitr::opts_chunk$set(echo = TRUE)
 En estos proyectos usaremos diferentes herramientas y metodologías como: [programación funcional](https://www.ionos.mx/digitalguide/paginas-web/desarrollo-web/programacion-funcional/), 
 [programacion paralela](https://www.teldat.com/blog/es/computacion-paralela-capacidad-procesamiento/), [web scrapping](https://aukera.es/blog/web-scraping/), [lógica difusa](https://www.sciencedirect.com/science/article/pii/S0186104217300955), [procesamiento del lenguaje natural](https://towardsdatascience.com/your-guide-to-natural-language-processing-nlp-48ea2511f6e1), [expresiones regulares](https://www.ionos.mx/digitalguide/paginas-web/creacion-de-paginas-web/regex/), y más....
 
+![FP](../img/FP.png)
+![PP](../img/PP.png)
+![WS](../img/WS.png)
+![DL](../img/DL.png)
+![NPL](../img/NPL.png)
+![RE](../img/RE.png)
 Todo este documento, la app y demás materiales al igual que otros proyectos se encuentran disponibles para su consulta y descarga en [Data&Code.com](https://data-and-code.github.io)
+
+![DC](../img/D_C.png)
 
 ***
 
@@ -44,7 +55,7 @@ En este primer proyecto tenemos varios objetivos a cumplir, y estos son:
 ~~Básicamente, nos permite instalar lo que nos hace falta de las librerías para su uso (incluso la propia librería) y llamarla al mismo tiempo.~~
 
 ```{r}
-pacman::p_load(fs, magrittr, purrr, tibble, dplyr, stringr, quanteda, pdftools, DT, ggplot2, reshape2, plotly, downloadthis)
+pacman::p_load(fs, magrittr, purrr, tibble, dplyr, stringr, quanteda, pdftools, DT, ggplot2, reshape2, plotly)
 ```
 
 ## 1. Extraer la información que se encuentre en la primera base de datos.
@@ -114,36 +125,29 @@ num_words_by_cycle <- words_by_syllabus %>%
   map_depth(1, reduce, sum) %>%
   as_tibble()
 
-plot_data <- data.frame(num_words_by_cycle)
-plot_data <- melt(plot_data) 
-colnames(plot_data)<-c("ciclo","conteo")
-plot_data["ciclo"] <- c("Primero","Segundo","Tercero","Cuarto")
+num_words_by_cycle <<- data.frame(num_words_by_cycle)
+num_words_by_cycle <<- melt(num_words_by_cycle,measure.vars = names(num_words_by_cycle)) 
+colnames(num_words_by_cycle)<-c("ciclo","conteo")
+num_words_by_cycle["ciclo"] <- c("Primero","Segundo","Tercero","Cuarto")
 ```
 
 ### Visualizamos el resultado 2
 ```{r}
-c <- ggplot(data=plot_data) + geom_bar(mapping = aes(x=ciclo, y=conteo, fill=ciclo), stat='identity')
+c <- ggplot(data=num_words_by_cycle) + geom_bar(mapping = aes(x=ciclo, y=conteo, fill=ciclo), stat='identity')
 fig <- ggplotly(c)
 fig
-datatable(plot_data)
 ```
 
 ## 3. Crear una tabla con las 10 palabras con mayor frecuencia que coinciden por ciclo.
 
 ```{r}
 most_freq_by_cycle <- words_by_syllabus %>%
-  # Eliminar un nivel para tener las palabras de todos los temarios por ciclo
   map_depth(1, ~ reduce(.x, append)) %>%
-  # Convertir los arreglos de palabras en una matriz dispersa de termino-documento por ciclo
   map(dfm) %>%
-  # Obtener las 10 palabras mas frecuentes por ciclo
   map(textstat_frequency, n = 10) %>%
-  # Seleccionar ciertas columnas
   map(as_tibble) %>%
   map(~ select(.x, Palabras = feature, Frecuencia = docfreq)) %>%
-  # Agregar una columna con el nombre del ciclo
   map2(cycles, ~ add_column(.x, Ciclo = .y)) %>%
-  # Convertir el resultado en una sola tabla
   reduce(bind_rows)
 ```
 
@@ -208,35 +212,16 @@ datatable(subjects_info, filter = 'top')
 ```
 
 ## 6. Construir una salida, donde se pueda exportar la tabla del paso 5 en formatos: .csv, .xls, .doc, .txt y html.
-
-```{r echo=FALSE}
+```{r}
 subjects_info %>%
-  download_this(
-    output_name = "subjects_info dataset",
-    output_extension = ".csv",
-    button_label = "CSV",
-    button_type = "default",
-    has_icon = TRUE,
-    icon = "fa fa-save"
-  )
-subjects_info %>%
-  download_this(
-    output_name = "subjects_info dataset",
-    output_extension = ".xlsx",
-    button_label = "XLSX",
-    button_type = "primary",
-    has_icon = TRUE,
-    icon = "fa fa-save"
-  )
-subjects_info %>%
-  download_this(
-    output_name = "subjects_info dataset",
-    output_extension = ".rds",
-    button_label = "RDS",
-    button_type = "succes",
-    has_icon = TRUE,
-    icon = "fa fa-save"
-  )
+  DT::datatable(
+    extensions = 'Buttons', 
+    options = list(dom = 'Bfrtip', 
+                   buttons = list('copy', 'print', list(
+                   extend = 'collection',
+                   buttons = c('csv', 'excel', 'pdf'),
+                   text = 'Download'
+               ))))
 ```
 
 ## 8. Redactar conclusiones del trabajo realizado.
