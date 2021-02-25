@@ -38,8 +38,7 @@ En este primer proyecto tenemos varios objetivos a cumplir, y estos son:
 4. Crear una tabla con las palabras que son únicas en cada archivo.
 5. Crear una tabla con la siguiente información: nombre de la asignatura, clave, ciclo, créditos.
 6. Construir una salida, donde se pueda exportar la tabla del paso 5 en formatos: .csv, .xls, .doc, .txt y html.
-7. Extra: crear un grafo ideal para que un estudiante regular termine su carrera (contar los posibles caminos). 
-8. Redactar conclusiones del trabajo realizado.
+7. Redactar conclusiones del trabajo realizado.
 
 ## Bibliotecas de R a usar
 [Pacman](http://https://www.rdocumentation.org/packages/pacman/versions/0.5.1) envuelve convenientemente las funciones relacionadas con la biblioteca y el paquete y las nombra de una manera intuitiva y consistente.
@@ -59,9 +58,10 @@ pacman::p_load(fs, magrittr, purrr, tibble, dplyr, stringr, quanteda, pdftools, 
     - Asignar el nombre de cada ciclo.
     - Renombrar los PDFs extrayendo solamente el nombre de la materia.
 ```{r}
-pdf_files_1 <- dir_ls("../extdata/Temarios IDeIO finales/", recurse = TRUE, glob = "*.pdf") %>%
+pdf_files_1 <- pdf_filenames_1 %>%
   map(pdf_text) %>%
-  map_chr(str_c, collapse = " ")
+  map_chr(str_c, collapse = " ") %>%
+  set_names(nm = pdf_filenames_1)
 
 cycles <- names(pdf_files_1) %>%
   str_remove("^../") %>%
@@ -84,18 +84,18 @@ ls.str(syllabus)
 ## 2. Crear una tabla con el número de palabras totales por ciclo.
 
 * Aquí lo que hacemos es :
-  + Importar al entorno los terminos de parada (stop words) en español
+  + Importar al entorno los términos de parada (stop words) en español
   + Composición de funciones para obtener las palabras del texto
     - Convertir el texto a minúsculas
     - Dividir y extraer las subcadenas de texto que correspondan a palabras
     - Convertir el resultado a un vector de caracteres
     - Eliminar los términos de parada de las palabras
-    - Eliminar los tokens que solo estan compuestos por un caracter
+    - Eliminar los tokens que solo estn compuestos por un caracter
     - Ejecutar las funciones en el orden que fueron declaradas
   + Extraer todas las palabras por temario
-  + Obtener el numero de palabras totales por ciclo
-    - Contar el numero de palabras de cada temario
-    - Obtener el numero de palabras por ciclo
+  + Obtener el número de palabras totales por ciclo
+    - Contar el número de palabras de cada temario
+    - Obtener el número de palabras por ciclo
     - Convertir la lista a una tabla
 ```{r}
 stop_words_es <- stopwords(language = "es")
@@ -153,9 +153,9 @@ datatable(most_freq_by_cycle, filter = 'top')
 
 ## 4. Crear una tabla con las palabras que son únicas en cada archivo.
 
-* Tener las palabras por temario eliminando la agrupacion por ciclo
-* Obtener las palabras que son unicas en cada archivo
-  + Filtrar las palabras para que sean unicas
+* Tener las palabras por temario eliminando la agrupación por ciclo
+* Obtener las palabras que son únicas en cada archivo
+  + Filtrar las palabras para que sean únicas
   + Agregar una columna con el nombre del ciclo
   + Convertir el resultado en una sola tabla
   + Renombrar la columna con las palabras
@@ -181,8 +181,8 @@ datatable(uniq_words_by_syllabus, filter = 'top')
 
 ## 5. Crear una tabla con la siguiente información: nombre de la asignatura, clave, ciclo, créditos.
 
-* Extraer la informacion con expresiones regulares
-  + Reducir las dimensiones para eliminar la agrupacion por ciclos
+* Extraer la información con expresiones regulares
+  + Reducir las dimensiones para eliminar la agrupación por ciclos
   + Convertir el resultado a una tabla
   
 ```{r}
@@ -216,13 +216,13 @@ subjects_info %>%
                ))))
 ```
 
-## 8. Redactar conclusiones del trabajo realizado.
+## 7. Redactar conclusiones del trabajo realizado.
 
-Después de estar probando todas estas técnicas y herramientas para la extracción de datos que mencionamos en la introducción, podemos ver el potencial de poder trabajar con casi cualquier fuente de datos que tengamos **o no** disponibles. Además, en este ejercicio leer los PDFs fue relativamente sencillo pues solamente fue necesario extraer texto, y obtener a partir de técnicas como las expresiones regulares.
+Después de estar probando todas estas técnicas y herramientas para la extracción de datos que mencionamos en la introducción, podemos ver el potencial de poder trabajar con casi cualquier fuente de datos que tengamos **o no** disponibles. Además, en este ejercicio, leer los PDFs fue relativamente sencillo, pues solamente fue necesario extraer texto, y obtenerlo a partir de técnicas como las expresiones regulares.
 
-Si bien aun nos queda aspectos que pulir del lado de ETL como de visualización, iremos liberando las actualizaciones conforme logremos puntos importantes.
+Si bien aún nos quedan aspectos que pulir del lado de ETL como de visualización, iremos liberando las actualizaciones conforme logremos puntos importantes.
 
-Cabe recalcar que aquí aprovechamos diversas técnicas y metodolígas a lo largo de la carrera, entre ellas: Programación funcional, Procesamiento del Lenguaje Natural, Visualziación de datos en Shiny/RMarkdown y Expresiones Regulares.
+Cabe recalcar que aquí aprovechamos diversas técnicas y metodologías vistas a lo largo de la carrera y algunas otras que hemos aprendido por nuestra cuenta. Entre ellas: Programación funcional, Procesamiento del Lenguaje Natural, la visualización de datos en Shiny/RMarkdown y las Expresiones Regulares.
 
 ***
 
@@ -237,9 +237,9 @@ En este segundo proyecto tenemos varios objetivos a cumplir, y estos son:
 
 ## Extraemos los datos
 
-Este codigo no se ejecutara debido al peso computancial alto que implica; Por otro lado, ya esta precargado los datos obtenidos por el código y será con lo que trabajaremos.
+Este código no se ejecutará debido al alto costo computacional que implica. Por otro lado, ya están precargados los datos obtenidos por el código, y serán con los que trabajaremos.
 
-De cualquier forma, el código se mantiene a la vista para la comprensión del procedimiento.
+De cualquier forma, el código se presenta a continuación para la comprensión del procedimiento.
 
 ```{r eval=FALSE, include=FALSE}
 # Extraccion del texto de los PDFs
@@ -344,7 +344,7 @@ save(pdf_files_2, file = "../extdata/base_de_datos_2_raw.RData")
 
 ## 2. Con la información proporcionada a nivel mundial, cree un tabla y muestre un gráfico que visualice la información mensual.
 
-Con la informacion obtenida, se lleva a cabo el proceso de limpieza.
+Con la información obtenida, se lleva a cabo el proceso de limpieza.
 
 ```{r}
 pacman::p_load(purrr, stringr, dplyr, tidyr, ggplot2, lubridate)
@@ -523,7 +523,7 @@ worldwide_info %>%
 
 La extracción de la información de los estados se lleva a cabo en las siguientes líneas de código.
 
-Algunos estados se pudieron obtener, otros no.
+Algunos estados se pudieron obtener; algunos otros no.
 
 ```{r}
 # Extraer el texto del que se obtiene la informacion por entidad federativa
@@ -1033,7 +1033,7 @@ positive_deaths_info <- as_tibble(
 datatable(positive_deaths_info)
 ```
 
-## Crear grafico para visualizar la información mensual
+## Crear gráfico para visualizar la información mensual
 
 ```{r}
 positive_deaths_info %>%
@@ -1044,8 +1044,8 @@ positive_deaths_info %>%
   ggplotly()
 ```
 
-## 4. Redactar conclusiones del trabajop realizado
+## 4. Redactar conclusiones del trabajo realizado
 
-Este proyecto fue por mucho más retador que el primero. En primer lugar, obtener texto de imagenes fue sumamente complejo. Además, la única forma de obtener las imágenes fue a partir de distintas muestras de distintas calidades, lo cual computacionalmente fue bastante costoso y la única forma de agilizarlo fue paralelizando el código. Esto desmuestra lo complejo que es analizar archivos tan poco estructurados como lo pueden ser los PDFs. Y bueno, al final el resultado no fue ni por poco perfecto, pues fue necesario llevar a cabo mucha limpieza para obtener los resultados.
+Este proyecto fue por mucho más retador que el primero. En primer lugar, obtener texto de imágenes fue sumamente complejo. Además, la única forma de obtener las imágenes fue a partir de distintas muestras de distintas calidades, lo cual computacionalmente fue bastante costoso y la única forma de agilizar el proceso fue paralelizando el código. Esto desmuestra lo complejo que es analizar archivos tan poco estructurados como lo pueden ser los PDFs. Y bueno, al final el resultado no fue ni por poco perfecto, pues fue necesario llevar a cabo mucha limpieza para obtener la información deseada.
 
-De igual forma aprovechamos las mismas erramientas pero en especial: Programación funcional, Visualziación de datos en Shiny/RMarkdown y Web Scrapping.
+De igual forma, aprovechamos las mayoría de las herramientas usadas en el proyecto anterior, pero en especial de la programación funcional, la visualización de datos en Shiny/RMarkdown y el Web Scraping.
