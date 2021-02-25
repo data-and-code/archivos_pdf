@@ -19,9 +19,9 @@ header <- dashboardHeader(title = "Archivos en PDF")
 
 sidebar <- dashboardSidebar(
     sidebarMenu(
-            menuItem("Base de Datos 1", tabName = "data_1", icon = icon("chart-bar")),
-            menuItem("Base de Datos 2", tabName = "data_2", icon = icon("database"))
-        )
+        menuItem("Base de Datos 1", tabName = "data_1", icon = icon("chart-bar")),
+        menuItem("Base de Datos 2", tabName = "data_2", icon = icon("database"))
+    )
 )
 
 body <- dashboardBody(
@@ -31,58 +31,58 @@ body <- dashboardBody(
                 fluidRow(
 
                     boxPlus(title = "10 palabras con mayor frecuencia por ciclo",
-                        closable = F,
-                        solidHeader = F,
-                        collapsible = T,
-                        status = "info",
-                        # Create a new Row in the UI for selectInputs
-                        fluidRow(
-                            column(4,
-                                   selectInput("pal",
-                                               "Palabras:",
-                                               c("todos",
-                                                 unique(as.character(most_freq_by_cycle$Palabras))))
+                            closable = F,
+                            solidHeader = F,
+                            collapsible = T,
+                            status = "info",
+                            # Create a new Row in the UI for selectInputs
+                            fluidRow(
+                                column(4,
+                                       selectInput("pal",
+                                                   "Palabras:",
+                                                   c("todos",
+                                                     unique(as.character(most_freq_by_cycle$Palabras))))
+                                ),
+                                column(4,
+                                       selectInput("frec",
+                                                   "Frecuencia:",
+                                                   c("todos",
+                                                     unique(as.character(most_freq_by_cycle$Frecuencia))))
+                                ),
+                                column(4,
+                                       selectInput("cic",
+                                                   "Ciclo:",
+                                                   c("todos",
+                                                     unique(as.character(most_freq_by_cycle$Ciclo))))
+                                )
                             ),
-                            column(4,
-                                   selectInput("frec",
-                                               "Frecuencia:",
-                                               c("todos",
-                                                 unique(as.character(most_freq_by_cycle$Frecuencia))))
-                            ),
-                            column(4,
-                                   selectInput("cic",
-                                               "Ciclo:",
-                                               c("todos",
-                                                 unique(as.character(most_freq_by_cycle$Ciclo))))
-                            )
-                        ),
-                        # Create a new row for the table.
-                        DT::dataTableOutput("table_2")
+                            # Create a new row for the table.
+                            DT::dataTableOutput("table_2")
 
-                        ),
+                    ),
 
                     boxPlus(title = "Palabras únicas en cada archivo",
-                        closable = F,
-                        solidHeader = F,
-                        collapsible = T,
-                        status = "info",
-                        # Create a new Row in the UI for selectInputs
-                        fluidRow(
-                            column(4,
-                                   selectInput("pala",
-                                               "Palabras:",
-                                               c("todos",
-                                                 unique(as.character(uniq_words_by_syllabus$Palabras))))
+                            closable = F,
+                            solidHeader = F,
+                            collapsible = T,
+                            status = "info",
+                            # Create a new Row in the UI for selectInputs
+                            fluidRow(
+                                column(4,
+                                       selectInput("pala",
+                                                   "Palabras:",
+                                                   c("todos",
+                                                     unique(as.character(uniq_words_by_syllabus$Palabras))))
+                                ),
+                                column(4,
+                                       selectInput("arc",
+                                                   "Archivo:",
+                                                   c("todos",
+                                                     unique(as.character(uniq_words_by_syllabus$Archivo))))
+                                ),
                             ),
-                            column(4,
-                                   selectInput("arc",
-                                               "Archivo:",
-                                               c("todos",
-                                                 unique(as.character(uniq_words_by_syllabus$Archivo))))
-                            ),
-                        ),
-                        # Create a new row for the table.
-                        DT::dataTableOutput("table_3")
+                            # Create a new row for the table.
+                            DT::dataTableOutput("table_3")
 
                     ),
 
@@ -94,46 +94,46 @@ body <- dashboardBody(
                             tableOutput("table_1")),
 
                     boxPlus(title = "Tabla de información",
-                        width = 12,
-                        closable = F,
-                        solidHeader = F,
-                        collapsible = T,
-                        status = "info",
-                        # Create a new Row in the UI for selectInputs
-                        fluidRow(
-                            column(4,
-                                   selectInput("asig",
-                                               "Nombre:",
-                                               c("todos",
-                                                 unique(as.character(subjects_info$`Nombre de la asignatura`))))
+                            width = 12,
+                            closable = F,
+                            solidHeader = F,
+                            collapsible = T,
+                            status = "info",
+                            # Create a new Row in the UI for selectInputs
+                            fluidRow(
+                                column(4,
+                                       selectInput("asig",
+                                                   "Nombre:",
+                                                   c("todos",
+                                                     unique(as.character(subjects_info$`Nombre de la asignatura`))))
+                                ),
+                                column(4,
+                                       selectInput("cla",
+                                                   "Clave:",
+                                                   c("todos",
+                                                     unique(as.character(subjects_info$Clave))))
+                                ),
+                                column(4,
+                                       selectInput("cic",
+                                                   "Ciclo:",
+                                                   c("todos",
+                                                     unique(as.character(subjects_info$Ciclo))))
+                                ),
+                                column(4,
+                                       selectInput("cred",
+                                                   "Créditos:",
+                                                   c("todos",
+                                                     unique(as.character(subjects_info$Créditos))))
+                                ),
                             ),
-                            column(4,
-                                   selectInput("cla",
-                                               "Clave:",
-                                               c("todos",
-                                                 unique(as.character(subjects_info$Clave))))
-                            ),
-                            column(4,
-                                   selectInput("cic",
-                                               "Ciclo:",
-                                               c("todos",
-                                                 unique(as.character(subjects_info$Ciclo))))
-                            ),
-                            column(4,
-                                   selectInput("cred",
-                                               "Créditos:",
-                                               c("todos",
-                                                 unique(as.character(subjects_info$Créditos))))
-                            ),
-                        ),
-                        # Create a new row for the table.
-                        DT::dataTableOutput("table_4"),
+                            # Create a new row for the table.
+                            DT::dataTableOutput("table_4"),
 
-                        downloadButton('downloadDataCSV', 'Descargar CSV'),
-                        downloadButton('downloadDataXLS', 'Descargar XLS'),
-                        downloadButton('downloadDataDOC', 'Descargar DOC'),
-                        downloadButton('downloadDataTXT', 'Descargar TXT'),
-                        downloadButton('downloadDataHTML', 'Descargar HTML')
+                            downloadButton('downloadDataCSV', 'Descargar CSV'),
+                            downloadButton('downloadDataXLS', 'Descargar XLS'),
+                            downloadButton('downloadDataDOC', 'Descargar DOC'),
+                            downloadButton('downloadDataTXT', 'Descargar TXT'),
+                            downloadButton('downloadDataHTML', 'Descargar HTML')
 
                     ),
                 )
@@ -142,37 +142,37 @@ body <- dashboardBody(
         tabItem(tabName = "data_2",
                 h2("Base de Datos 2"),
                 fluidRow(
-                        boxPlus(title = "Tabla de información mensual",
-                                width = 8,
-                                closable = F,
-                                solidHeader = F,
-                                collapsible = T,
-                                status = "info",
-                                tableOutput("table_world")),
+                    boxPlus(title = "Tabla de información mensual",
+                            width = 10,
+                            closable = F,
+                            solidHeader = F,
+                            collapsible = T,
+                            status = "info",
+                            dataTableOutput("table_world")),
 
-                        boxPlus(title = "Gráfico de información mensual",
-                                width = 10,
-                                closable = F,
-                                solidHeader = F,
-                                collapsible = T,
-                                status = "info",
-                                plotOutput("plot_1")),
+                    boxPlus(title = "Gráfico de información mensual",
+                            width = 10,
+                            closable = F,
+                            solidHeader = F,
+                            collapsible = T,
+                            status = "info",
+                            plotOutput("plot_1")),
 
-                        boxPlus(title = "Tabla de defunciones positivas",
-                                width = 10,
-                                closable = F,
-                                solidHeader = F,
-                                collapsible = T,
-                                status = "info",
-                                tableOutput("table_death")),
+                    boxPlus(title = "Tabla de defunciones positivas",
+                            width = 11,
+                            closable = F,
+                            solidHeader = F,
+                            collapsible = T,
+                            status = "info",
+                            dataTableOutput("table_death")),
 
-                        boxPlus(title = "Gráfico de defunciones positivas",
-                                width = 10,
-                                closable = F,
-                                solidHeader = F,
-                                collapsible = T,
-                                status = "info",
-                                plotOutput("plot_2")),
+                    boxPlus(title = "Gráfico de defunciones positivas",
+                            width = 11,
+                            closable = F,
+                            solidHeader = F,
+                            collapsible = T,
+                            status = "info",
+                            plotOutput("plot_2")),
                 )
         )
     )
@@ -271,10 +271,7 @@ server <- function(input, output) {
             write.csv(subjects_info, file)
         })
 
-    output$table_world <- renderTable({
-        worldwide_info %>%
-            mutate(`Días` = as.character(format(`Días`, "%d-%m-%Y")))
-    }, striped = T, hover = T, align = 'c')
+    output$table_world <- renderDataTable(worldwide_info)
 
     output$plot_1 <- renderPlot({
         worldwide_info %>%
@@ -285,10 +282,7 @@ server <- function(input, output) {
             labs(y = "Número de casos", title = "Casos acumulados de COVID-19 por SARS-CoV-2 por regiones de la OMS\n(Septiembre 2020)")
     })
 
-    output$table_death <- renderTable({
-        positive_deaths_info %>%
-            mutate(`Días` = as.character(format(`Días`, "%d-%m-%Y")))
-    }, striped = T, hover = T, align = 'c')
+    output$table_death <- renderDataTable(positive_deaths_info)
 
     output$plot_2 <- renderPlot({
         positive_deaths_info %>%
