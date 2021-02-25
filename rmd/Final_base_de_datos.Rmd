@@ -244,7 +244,7 @@ Este código no se ejecutará debido al alto costo computacional que implica. Po
 
 De cualquier forma, el código se presenta a continuación para la comprensión del procedimiento.
 
-```{r eval=FALSE, include=FALSE}
+```{r eval=FALSE}
 # Extraccion del texto de los PDFs
 pacman::p_load(fs, pdftools, tesseract, rvest, purrr, furrr, stringr)
 
