@@ -120,7 +120,7 @@ subjects_info <-
   list(
     "Nombre de la asignatura" = map_depth(syllabus, 1, ~ str_trim(str_extract(names(.x), pattern = "(?<=[A-Z]{2}[0-9]{4}).*"))),
     "Clave" = map_depth(syllabus, 1, ~ str_extract(names(.x), pattern = "[A-Z]{2}[0-9]{4}")),
-    "Ciclo" = map_depth(syllabus, 1, ~ str_extract(.x, pattern = "(?<=Área de formación curricular\n\\r?\\s?)[1-4]-[1-4]")),
+    "Ciclo" = map_depth(syllabus, 1, ~ str_extract(.x, pattern = "(?<=Área de formación curricular\r?\n\\s?)[1-4]-[1-4]")),
     "Créditos" = map_depth(syllabus, 1, ~ str_trim(str_extract(.x, pattern = "(?<=[A-Z]{2}[0-9]{4}\\s{2,10}).*(?=\\s{2,10}(Profesional Asociado|Licenciatura (Básica|Elección|Preespecialidad)))")))
   ) %>%
   # Reducir las dimensiones para eliminar la agrupacion por ciclos
