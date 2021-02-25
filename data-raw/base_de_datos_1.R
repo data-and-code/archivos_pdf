@@ -18,9 +18,9 @@ pdf_files_1 <- pdf_filenames_1 %>%
 cycles <- names(pdf_files_1) %>%
   str_remove("^../") %>%
   str_split_fixed(pattern = "/", n = 4) %>%
-  extract(, 3) %>%
+  magrittr::extract(, 3) %>%
   unique() %>%
-  extract(c(2:4, 1))
+  magrittr::extract(c(2:4, 1))
 
 # Obtener una lista de listas con el contenido de los PDFs agrupados por ciclos
 syllabus <- cycles %>%
@@ -120,7 +120,7 @@ subjects_info <-
   list(
     "Nombre de la asignatura" = map_depth(syllabus, 1, ~ str_trim(str_extract(names(.x), pattern = "(?<=[A-Z]{2}[0-9]{4}).*"))),
     "Clave" = map_depth(syllabus, 1, ~ str_extract(names(.x), pattern = "[A-Z]{2}[0-9]{4}")),
-    "Ciclo" = map_depth(syllabus, 1, ~ str_extract(.x, pattern = "(?<=Área de formación curricular\n\\s?)[1-4]-[1-4]")),
+    "Ciclo" = map_depth(syllabus, 1, ~ str_extract(.x, pattern = "(?<=Área de formación curricular\n\\r?\\s?)[1-4]-[1-4]")),
     "Créditos" = map_depth(syllabus, 1, ~ str_trim(str_extract(.x, pattern = "(?<=[A-Z]{2}[0-9]{4}\\s{2,10}).*(?=\\s{2,10}(Profesional Asociado|Licenciatura (Básica|Elección|Preespecialidad)))")))
   ) %>%
   # Reducir las dimensiones para eliminar la agrupacion por ciclos
