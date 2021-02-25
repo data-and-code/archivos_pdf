@@ -1,8 +1,15 @@
-
 # Aplicacion de Shiny
 library(shiny)
 library(shinydashboard)
+library(shinydashboardPlus)
 library(DT)
+library(purrr)
+library(stringr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(lubridate)
+
 
 # Cargar los datos al entorno
 load("base_de_datos_1.RData")
@@ -22,10 +29,12 @@ body <- dashboardBody(
         tabItem(tabName = "data_1",
                 h2("Base de Datos 1"),
                 fluidRow(
-                    box(title = "Número de palabras totales por ciclo", status = "info", tableOutput("table_1")),
 
-                    box(title = "10 palabras con mayor frecuencia por ciclo",
-
+                    boxPlus(title = "10 palabras con mayor frecuencia por ciclo",
+                        closable = F,
+                        solidHeader = F,
+                        collapsible = T,
+                        status = "info",
                         # Create a new Row in the UI for selectInputs
                         fluidRow(
                             column(4,
@@ -52,8 +61,11 @@ body <- dashboardBody(
 
                         ),
 
-                    box(title = "Palabras únicas en cada archivo",
-
+                    boxPlus(title = "Palabras únicas en cada archivo",
+                        closable = F,
+                        solidHeader = F,
+                        collapsible = T,
+                        status = "info",
                         # Create a new Row in the UI for selectInputs
                         fluidRow(
                             column(4,
@@ -74,13 +86,24 @@ body <- dashboardBody(
 
                     ),
 
-                    box(title = "Tabla de información",
+                    boxPlus(title = "Número de palabras totales por ciclo",
+                            closable = F,
+                            solidHeader = F,
+                            collapsible = T,
+                            status = "info",
+                            tableOutput("table_1")),
 
+                    boxPlus(title = "Tabla de información",
+                        width = 12,
+                        closable = F,
+                        solidHeader = F,
+                        collapsible = T,
+                        status = "info",
                         # Create a new Row in the UI for selectInputs
                         fluidRow(
                             column(4,
                                    selectInput("asig",
-                                               "Nombre de la asignatura:",
+                                               "Nombre:",
                                                c("todos",
                                                  unique(as.character(subjects_info$`Nombre de la asignatura`))))
                             ),
@@ -117,7 +140,40 @@ body <- dashboardBody(
         ),
 
         tabItem(tabName = "data_2",
-                h2("Base de Datos 2")
+                h2("Base de Datos 2"),
+                fluidRow(
+                        boxPlus(title = "Tabla de información mensual",
+                                width = 8,
+                                closable = F,
+                                solidHeader = F,
+                                collapsible = T,
+                                status = "info",
+                                tableOutput("table_world")),
+
+                        boxPlus(title = "Gráfico de información mensual",
+                                width = 10,
+                                closable = F,
+                                solidHeader = F,
+                                collapsible = T,
+                                status = "info",
+                                plotOutput("plot_1")),
+
+                        boxPlus(title = "Tabla de defunciones positivas",
+                                width = 10,
+                                closable = F,
+                                solidHeader = F,
+                                collapsible = T,
+                                status = "info",
+                                tableOutput("table_death")),
+
+                        boxPlus(title = "Gráfico de defunciones positivas",
+                                width = 10,
+                                closable = F,
+                                solidHeader = F,
+                                collapsible = T,
+                                status = "info",
+                                plotOutput("plot_2")),
+                )
         )
     )
 )
@@ -214,6 +270,27 @@ server <- function(input, output) {
         content = function(file) {
             write.csv(subjects_info, file)
         })
+
+    output$table_world <- renderTable(worldwide_info, striped = T, hover = T, align = 'c')
+
+    output$plot_1 <- renderPlot({
+        worldwide_info %>%
+            pivot_longer(-1, names_to = "Regiones de la OMS", values_to = "cases") %>%
+            ggplot(aes(x = `Días`, y = cases, color = `Regiones de la OMS`)) %>%  +
+            geom_line() +
+            scale_colour_manual(values = c("green", "red2", "purple", "blue2", "green4", "yellow3")) +
+            labs(y = "Número de casos", title = "Casos acumulados de COVID-19 por SARS-CoV-2 por regiones de la OMS\n(Septiembre 2020)")
+    })
+
+    output$table_death <- renderTable(positive_deaths_info, striped = T, hover = T, align = 'c')
+
+    output$plot_2 <- renderPlot({
+        positive_deaths_info %>%
+            pivot_longer(-1, names_to = "Entidades federativas", values_to = "cases") %>%
+            ggplot(aes(x = `Días`, y = cases, color = `Entidades federativas`)) %>% +
+            geom_line() +
+            labs(y = "Defunciones positivas", title = "Defunciones positivas a COVID-19 por entidad federativa\n(Septiembre 2020)")
+    })
 }
 
 # Run the application

@@ -1,0 +1,11 @@
+# Aplicacion de Shiny
+library(shiny)
+library(shinydashboard)
+library(shinydashboardPlus)
+library(DT)
+library(purrr)
+library(stringr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(lubridate)

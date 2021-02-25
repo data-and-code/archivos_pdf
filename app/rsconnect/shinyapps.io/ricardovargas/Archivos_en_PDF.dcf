@@ -1,0 +1,12 @@
+name: Archivos_en_PDF
+title: Archivos_en_PDF
+username:
+account: ricardovargas
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3695741
+bundleId: 4270248
+url: https://ricardovargas.shinyapps.io/Archivos_en_PDF/
+when: 1614245821.37921
+asMultiple: FALSE
+asStatic: FALSE
