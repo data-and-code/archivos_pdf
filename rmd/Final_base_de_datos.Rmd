@@ -222,6 +222,8 @@ Después de estar probando todas estas técnicas y herramientas para la extracci
 
 Si bien aun nos queda aspectos que pulir del lado de ETL como de visualización, iremos liberando las actualizaciones conforme logremos puntos importantes.
 
+Cabe recalcar que aquí aprovechamos diversas técnicas y metodolígas a lo largo de la carrera, entre ellas: Programación funcional, Procesamiento del Lenguaje Natural, Visualziación de datos en Shiny/RMarkdown y Expresiones Regulares.
+
 ***
 
 # Proyecto 2
@@ -846,9 +848,6 @@ baja_california <- bc %>%
   as.integer()
 ```
 
-<<<<<<< HEAD
-Este código corresponde a los estados que no pudieron obtenerse.
-
 ```{r}
 ## Estados no terminados ##
 
@@ -1048,3 +1047,5 @@ positive_deaths_info %>%
 ## 4. Redactar conclusiones del trabajop realizado
 
 Este proyecto fue por mucho más retador que el primero. En primer lugar, obtener texto de imagenes fue sumamente complejo. Además, la única forma de obtener las imágenes fue a partir de distintas muestras de distintas calidades, lo cual computacionalmente fue bastante costoso y la única forma de agilizarlo fue paralelizando el código. Esto desmuestra lo complejo que es analizar archivos tan poco estructurados como lo pueden ser los PDFs. Y bueno, al final el resultado no fue ni por poco perfecto, pues fue necesario llevar a cabo mucha limpieza para obtener los resultados.
+
+De igual forma aprovechamos las mismas erramientas pero en especial: Programación funcional, Visualziación de datos en Shiny/RMarkdown y Web Scrapping.
