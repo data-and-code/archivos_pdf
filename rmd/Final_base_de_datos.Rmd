@@ -241,7 +241,7 @@ De cualquier forma, el código se mantiene a la vista para la comprensión del p
 
 ```{r eval=FALSE, include=FALSE}
 # Extraccion del texto de los PDFs
-pacman::p_load(pdftools, tesseract, rvest, purrr, furrr, stringr)
+pacman::p_load(fs, pdftools, tesseract, rvest, purrr, furrr, stringr)
 
 # Definir el numero de workers que permitiran ejecutar funciones de purrr de forma paralela
 plan(multisession, workers = 4)
@@ -325,7 +325,7 @@ pdf_files_500 <- pdf_urls %>%
   rev()
 
 # Almacenar los resultados en una sola lista
-pdf_files <- list(
+pdf_files_2 <- list(
   dpi_500 = pdf_files_500,
   dpi_550 = pdf_files_550,
   dpi_600 = pdf_files_600,
@@ -337,7 +337,7 @@ pdf_files <- list(
 )
 
 # Se almacena el resultado en un archivo RData para usarlo el resto del proyecto
-save(pdf_files, file = "app/base_de_datos_2.RData")
+save(pdf_files_2, file = "../extdata/base_de_datos_2_raw.RData")
 ```
 
 ## 2. Con la información proporcionada a nivel mundial, cree un tabla y muestre un gráfico que visualice la información mensual.
@@ -348,7 +348,7 @@ Con la informacion obtenida, se lleva a cabo el proceso de limpieza.
 pacman::p_load(purrr, stringr, dplyr, tidyr, ggplot2, lubridate)
 
 # Importar al entorno el texto de los PDFs diarios (obtenidos previamente mediante web scraping)
-load("../app/base_de_datos_2.RData")
+load("../extdata/base_de_datos_2_raw.RData")
 
 # 2. Con la información proporcionada a nivel mundial, cree un tabla y muestre un gráfico que visualice la información mensual.
 

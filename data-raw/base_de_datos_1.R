@@ -126,6 +126,6 @@ subjects_info <-
 # Visualizar el resultado 5
 View(subjects_info)
 
-# Almacenar el resultado en un archivo RData
-save(pdf_files_1, most_freq_by_cycle, num_words_by_cycle, subjects_info, syllabus, uniq_words_by_syllabus,
-     words_by_syllabus, words_by_syllabus_no_cycle, file = "app/base_de_datos_1.RData")
+# Almacenar los resultados en un archivo RData
+save(syllabus, num_words_by_cycle, most_freq_by_cycle, uniq_words_by_syllabus,
+     subjects_info, file = "app/base_de_datos_1.RData")
