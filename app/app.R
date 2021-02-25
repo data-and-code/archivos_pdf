@@ -271,7 +271,10 @@ server <- function(input, output) {
             write.csv(subjects_info, file)
         })
 
-    output$table_world <- renderTable(worldwide_info, striped = T, hover = T, align = 'c')
+    output$table_world <- renderTable({
+        worldwide_info %>%
+            mutate(`Días` = as.character(format(`Días`, "%d-%m-%Y")))
+    }, striped = T, hover = T, align = 'c')
 
     output$plot_1 <- renderPlot({
         worldwide_info %>%
@@ -282,7 +285,10 @@ server <- function(input, output) {
             labs(y = "Número de casos", title = "Casos acumulados de COVID-19 por SARS-CoV-2 por regiones de la OMS\n(Septiembre 2020)")
     })
 
-    output$table_death <- renderTable(positive_deaths_info, striped = T, hover = T, align = 'c')
+    output$table_death <- renderTable({
+        positive_deaths_info %>%
+            mutate(`Días` = as.character(format(`Días`, "%d-%m-%Y")))
+    }, striped = T, hover = T, align = 'c')
 
     output$plot_2 <- renderPlot({
         positive_deaths_info %>%
