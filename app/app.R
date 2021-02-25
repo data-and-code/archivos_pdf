@@ -1,5 +1,8 @@
+
 # Aplicacion de Shiny
-pacman::p_load(shiny, shinydashboard,fs, magrittr, purrr, tibble, dplyr, stringr, quanteda, pdftools)
+library(shiny)
+library(shinydashboard)
+library(DT)
 
 # Cargar los datos al entorno
 load("base_de_datos_1.RData")

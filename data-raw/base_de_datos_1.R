@@ -3,11 +3,16 @@ pacman::p_load(fs, magrittr, purrr, tibble, dplyr, stringr, quanteda, pdftools)
 
 # 1. Extraer la información que se encuentre en la primera base de datos.
 
+# Almacenar los nombres de los archivos PDF
+pdf_filenames_1 <- dir_ls("extdata/Temarios IDeIO finales/", recurse = TRUE, glob = "*.pdf")
+
 # Leer el contenido de los archivos PDFs y almacenarlos en una sola lista
-pdf_files_1 <- dir_ls("extdata/Temarios IDeIO finales/", recurse = TRUE, glob = "*.pdf") %>%
+pdf_files_1 <- pdf_filenames_1 %>%
   map(pdf_text) %>%
   # Colapsar el texto de cada PDF en una sola cadena
-  map_chr(str_c, collapse = " ")
+  map_chr(str_c, collapse = " ") %>%
+  # Renombramos los nombres de cada elemento del vector
+  set_names(nm = pdf_filenames_1)
 
 # Extraer los nombres de los ciclos en orden
 cycles <- names(pdf_files_1) %>%
